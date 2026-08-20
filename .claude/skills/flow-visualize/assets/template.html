@@ -1,0 +1,50 @@
+<title>{{TITLE}}</title>
+<!--
+  flow-visualize テンプレート。{{TITLE}} {{SVG}} {{LEGEND}} {{SOURCE}} を差し替える。
+  自己完結（外部依存なし）。ページ本体は横スクロールさせず、.board 内だけスクロールさせる。
+-->
+<style>
+  :root{ --bg:#f8fafc; --ink:#0f172a; --muted:#64748b; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;}
+  .wrap{max-width:1500px;margin:0 auto;padding:24px 20px 60px}
+  h1{font-size:20px;margin:0 0 12px}
+  .board{overflow-x:auto;border:1px solid #e2e8f0;border-radius:12px;background:#fff;
+    box-shadow:0 1px 3px rgba(15,23,42,.06)}
+  svg{display:block}
+  .card{border:1px solid #e2e8f0;border-radius:12px;background:#fff;padding:16px 18px;margin-top:16px}
+  .card h2{font-size:14px;margin:0 0 12px}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 16px}
+  .lg{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#334155}
+  .sw{width:24px;height:16px;border-radius:4px;flex:0 0 auto}
+  pre{margin:0;background:#0f172a;color:#e2e8f0;border-radius:8px;padding:14px;
+    font-size:11.5px;line-height:1.55;overflow-x:auto;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+</style>
+
+<div class="wrap">
+  <h1>{{TITLE}}</h1>
+
+  <div class="board">
+    <!-- 生成した <svg> を差し込む。<defs> に矢印マーカーを含めること：
+      <marker id="a"  ...><path d="M0,0 L8,3 L0,6 Z" fill="#334155"/></marker>  通常
+      <marker id="ar" ...><path ... fill="#dc2626"/></marker>                   手戻り
+      <marker id="at" ...><path ... fill="#d97706"/></marker>                   on_overdue
+    -->
+    {{SVG}}
+  </div>
+
+  <div class="card">
+    <h2>凡例</h2>
+    <!-- 図に登場した要素だけを出す。各行の雛形：
+      <div class="lg"><span class="sw" style="background:#eff6ff;border:1.6px solid #2563eb"></span>業務行為</div>
+    -->
+    <div class="legend">{{LEGEND}}</div>
+  </div>
+
+  <div class="card">
+    <h2>記法ソース（.flow）</h2>
+    <pre>{{SOURCE}}</pre>
+  </div>
+</div>

@@ -1,0 +1,114 @@
+# flow-notation v0.2 — 住宅ローン審査フロー (AS-IS)
+# v0.2 機能を一通り使う: par(fork) / join / sla / on_overdue / 外部連携
+roles:      [顧客#社外, 営業窓口, 審査部, 保証会社#外部, 支店長]
+timeline:   [Day0, Day1, Day2, Day3, Day4, Day5-7]
+milestones: { 与信承認: Day4, 融資実行: Day5-7 }
+sla:        { 保証審査: { span: [Day2, Day3], limit: 2営業日 } }
+view:       AS-IS
+
+steps:
+  - start: ローン申込
+    at: [顧客#社外, Day0]
+
+  - id: n1
+    at: [顧客#社外, Day0]
+    from: ローン申込
+    act: 申込書を記入する
+    by: 人手/Web入力
+    artifact: 申込書
+    op: 作成
+
+  - id: n2
+    at: [営業窓口, Day1]
+    from: n1
+    act: 申込を受け付ける
+    by: システム/審査システム
+    artifact: 審査システム
+    op: 登録
+
+  - id: c1
+    cond: 書類に不備?
+    from: n2
+    yes: n3
+    no:  par1
+
+  - id: n3
+    at: [営業窓口, Day1]
+    from: c1
+    act: 不備を照会し再提出を依頼する
+    wait: 再提出待ち
+    rework: n1
+    issue: 顧客との往復が多く長期化
+
+  # fork: 与信審査と保証審査を並行開始
+  - par: par1
+    from: n2
+    to: [n4, n5]
+
+  - id: n4
+    at: [審査部, Day2]
+    from: par1
+    act: 与信審査を行う
+    by: システム/スコアリング
+    artifact: 審査システム
+    op: スコアリング
+    time: 半日
+
+  - id: n5
+    at: [保証会社#外部, Day2]
+    from: par1
+    act: 保証審査を行う
+    by: 外部/保証会社API
+    artifact: 保証依頼データ
+    op: 送信
+    issue: 結果が読めず待ちが長い
+    on_overdue: -> 督促
+
+  # join: 両方完了で取りまとめ
+  - id: n6
+    at: [審査部, Day3]
+    from: [n4, n5]
+    join: all
+    act: 審査結果を取りまとめる
+    artifact: 審査結果票
+    op: 作成
+
+  - except: 反社/保証NG?
+    from: n6
+    ng: 謝絶(終了)
+    ok: n7
+
+  - id: n7
+    at: [支店長, Day4]
+    from: n6
+    act: 融資を決裁する
+    by: 人手/決裁
+    wait: 決裁待ち1日
+    artifact: 決裁書
+    op: 承認
+    milestone: 与信承認
+
+  - id: n8
+    at: [営業窓口, Day5-7]
+    from: n7
+    act: 金消契約を締結する
+    by: 人手/対面
+    artifact: 金消契約書
+    op: 締結
+
+  - id: n9
+    at: [営業窓口, Day5-7]
+    from: n8
+    act: 融資を実行する
+    by: システム/勘定系
+    artifact: 勘定系
+    op: 振込
+    milestone: 融資実行
+
+  - end: 入金（完了）
+    at: [顧客#社外, Day5-7]
+    from: n9
+
+  - end: 謝絶（終了）
+    at: [顧客#社外, Day3]
+    view: 例外終了

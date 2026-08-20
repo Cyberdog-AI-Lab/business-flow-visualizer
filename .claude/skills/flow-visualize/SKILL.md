@@ -1,0 +1,87 @@
+---
+name: flow-visualize
+description: >-
+  flow-notation の .flow テキスト（業務フロー記述DSL）を、役割×時系列のスイムレーンHTML図
+  （自己完結・インラインSVG）に変換するスキル。「.flowを図にして」「業務フローを可視化して」
+  「flowファイルをHTMLにして」「スイムレーンを描いて」など、記法テキストから図を生成したいときに使う。
+---
+
+# flow-visualize — .flow → スイムレーンHTML
+
+`.flow`（YAML）を読み、**自己完結HTML（インラインSVG）** のスイムレーン図に変換する。
+記法の語彙・意味・描画規約は必ず `docs/SPEC.md` を正とする（このスキルは描画手順のみ）。
+
+## 入力・出力
+
+- 入力：`.flow` ファイルのパス、または DSL テキスト。
+- 出力：単一の `.html`（`<title>` ＋インライン `<style>` ＋インライン `<svg>`）。外部依存なし。
+- 図の下に **凡例（使った要素だけ自動生成）** と、任意で **DSLソースパネル** を付ける。
+
+## 手順
+
+### 1. パース
+
+YAML として読む。`roles` / `timeline` / `steps` を取得。`milestones` / `sla` / `view` は任意。
+不正・未定義キーは `docs/SPEC.md` の語彙表に照らし、勝手に解釈せず警告として本文に注記する。
+
+### 2. グリッド座標を計算（決め打ち配置）
+
+定数（既定）：
+
+```
+LABEL_W = 160      # 左の役割ラベル幅
+HEADER_H = 56      # 上の時系列ヘッダ高
+LANE_H  = 172      # 1レーンの高さ
+COL_W   = 250      # 1列の幅（timeline が多いなら 220〜280 で調整）
+NODE_W  = 150 ; NODE_H = 48
+```
+
+- `laneTop(i)   = HEADER_H + i * LANE_H`（i = `roles` のindex）
+- `laneCenter(i)= laneTop(i) + LANE_H/2`
+- `colCenter(j) = LABEL_W + COL_W/2 + j * COL_W`（j = `timeline` のindex。`milestones`/欠番時点は並び順に挿入して採番）
+- キャンバス：`width = LABEL_W + COL_W * 列数`、`height = HEADER_H + LANE_H * 行数`（＋下部余白）。
+- **セル中心** `cellCenter(役割, 時点) = (colCenter(timeIndex), laneCenter(roleIndex))`。
+- **同一セルに複数ノード**：`at` のスロット番号順（無ければ記述順）に、セル中心から縦に等間隔（±40px 目安）で積む（`docs/SPEC.md §2.2`）。
+- **`at` を持たない `cond`/`except`/`par`/`join`**：`docs/SPEC.md §2.1` の自動配置に従う（cond/except＝`from` の半列右・同レーン、fork＝`from` の半列右バー、join＝合流ノードの半列左バー）。`at` があればそれを優先。
+
+### 3. 各ステップをノードに変換
+
+`docs/SPEC.md §5.2` の「種別ごとの見た目」に従って形・色を割り当てる：
+
+- `act` → 青の角丸箱。`by` 前半で 👤/🖥/🔌、`by:外部/…` は水色枠のノードにする。
+- `start`/`end` → スタジアム（終了=緑、`view: 例外終了`=赤）。
+- `cond` → 黄ひし形、`except` → 赤ひし形。
+- ノード内に `act` を主行、`by`/`time`/`freq` を副行。`artifact`＋`op` は緑チップ、`wait` は橙⏳ピル、`issue` は⚠赤帯、`tobe` は紫破線ゴーストで併記。
+
+### 4. エッジ（矢印）を描く
+
+- `from:` の各前ノードのセル中心から当該ノードのセル中心へ、`<path>` ＋ `marker-end` で接続。
+- `rework:` → 赤の点線矢印（戻り）。`on_overdue:` → 琥珀の点線矢印＋⏰。
+- `cond`/`except` の分岐には `Yes/No`・`OK/NG` ラベルを近傍に置く。
+
+### 5. v0.2 の制御要素
+
+- `par`（fork）：`to:` の対象レーン範囲をまたぐ **slate の縦同期バー** を分岐点に置き、`from` からバー、バーから各 `to` へ矢印。
+- `join`：合流点に **slate の縦同期バー**。`join: any` はバーに「O」印。
+- `sla`：`span` の2時点の列位置にまたがる **青ブラケット＋バッジ**（`limit` を表示）。
+- `milestones` / `milestone:`：列位置に **紫の破線縦線＋★ラベル**。
+
+### 6. 凡例を自動生成
+
+その図に実際に登場した要素だけを凡例に出す（`assets/template.html` の凡例スニペット参照）。
+
+### 7. テンプレに流し込む
+
+`assets/template.html` を土台にする（CSS変数・`<marker>` 定義・`.board`（横スクロール）枠・凡例/ソースパネルの雛形入り）。
+`{{TITLE}}` `{{SVG}}` `{{LEGEND}}` `{{SOURCE}}` を差し替える。
+
+### 8. 破綻チェック
+
+- ページ本体が横スクロールしない（広い図は `.board` 内だけをスクロール）。
+- ノード同士・矢印とラベルが極端に重ならない（重なるなら `COL_W`/`LANE_H` を広げる）。
+- 可能なら生成 HTML をブラウザで開いて目視確認する。
+
+## 注意
+
+- 記法にない書式を勝手に足さない。迷ったら `docs/SPEC.md` を参照し、足りなければ本文に「未対応」と明記して描く。
+- サブフロー参照・入出力方向・版管理は**初版スコープ外**（SPEC §6）。使われていたら注記のみ。

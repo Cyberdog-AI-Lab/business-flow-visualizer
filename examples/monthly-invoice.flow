@@ -1,0 +1,66 @@
+# flow-notation v0.2 — 月次請求フロー (AS-IS)
+roles:      [営業部, 経理部, 部長, 顧客#社外]
+timeline:   [月初, 月末, +1営業日, +2営業日, +4営業日, +5営業日]
+milestones: { 請求確定: +3営業日 }
+view:       AS-IS
+
+steps:
+  - start: 月次締め
+    at: [営業部, 月初]
+    trigger: 毎月1日/自動
+
+  - id: a1
+    at: [営業部, 月末]
+    from: 月次締め
+    act: 案件実績を集計する
+    by: 人手/Excel手入力
+    artifact: 実績Excel
+    op: 行追加
+    time: 30分
+    freq: 月1回
+    issue: 各人が手集計→二重入力でミス
+    tobe: RPAで自動集計
+
+  - id: a2
+    at: [経理部, +1営業日]
+    from: a1
+    act: 請求データを作成する
+    by: システム/会計SaaS
+    artifact: 請求DB
+    op: レコード登録
+
+  - id: c1
+    cond: 請求額>100万?
+    from: a2
+    yes: a3
+    no:  a4
+
+  - id: a3
+    at: [部長, +2営業日]
+    from: c1
+    act: 請求内容を承認する
+    by: 人手/メール承認
+    wait: 承認1営業日
+    artifact: 承認記録
+    op: 押印
+    rework: a2
+
+  - id: a4
+    at: [経理部, +4営業日]
+    from: [c1, a3]
+    join: any
+    act: 請求書を発行する
+    by: システム/帳票出力
+    artifact: 請求書PDF
+    op: 帳票出力
+    milestone: 請求確定
+
+  - id: a5
+    at: [顧客#社外, +5営業日]
+    from: a4
+    act: 請求書を受領する
+    by: 人手/メール受信
+
+  - end: 入金消込へ
+    at: [顧客#社外, +5営業日]
+    from: a5
