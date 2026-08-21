@@ -14,7 +14,7 @@
 - 記法の語彙・書式・配置ルールは **必ず `docs/SPEC.md` を参照**する（推測で書式を足さない）。
 - 図を描くとき（`.flow` → HTML）は `flow-visualize` スキルの手順に従う。
 - 業務を聞き取って記法に落とすときは `flow-interview` スキルの手順に従う。
-- サンプルは `examples/*.flow`。
+- サンプルは `examples/` に**シナリオ単位のフォルダ**で置いている（`examples/README.md` に一覧）。
 
 ## 設計原則（両対応）
 
@@ -29,7 +29,7 @@ business-flow-visualizer/
 ├── AGENTS.md                  指示の正本（このファイル）
 ├── CLAUDE.md                  @AGENTS.md 取り込み
 ├── docs/SPEC.md               記法仕様（v0.2）★中核
-├── examples/*.flow            サンプル記法
+├── examples/{番号}-{名前}/     シナリオ集（概要・ヒアリング記録・.flow・.html）
 ├── .claude/skills/
 │   ├── flow-visualize/SKILL.md
 │   └── flow-interview/SKILL.md
