@@ -6,14 +6,17 @@
 
 - **記法（DSL）本体の仕様 → [docs/SPEC.md](docs/SPEC.md)**（唯一の正）
 - **スキル2種：**
-  - `flow-visualize` … `.flow` テキスト → 自己完結HTML図（インラインSVG）を生成する
   - `flow-interview` … 業務ヒアリング（対話）→ `.flow` テキストを生成する
+  - `flow-visualize` … `.flow` テキスト → 自己完結HTML図（インラインSVG）を生成する
+  - `flow-verify` … 3つの成果物（ヒアリング記録・`.flow`・HTML）の食い違いを逆流チェックする
 
 ## エージェントへの指示
 
 - 記法の語彙・書式・配置ルールは **必ず `docs/SPEC.md` を参照**する（推測で書式を足さない）。
 - 図を描くとき（`.flow` → HTML）は `flow-visualize` スキルの手順に従う。
 - 業務を聞き取って記法に落とすときは `flow-interview` スキルの手順に従う。
+- **聞いていないことを書かない。** 所要時間・課題・改善案・システム名を推測で埋めない（`flow-interview` の鉄則）。
+- `flow-interview` / `flow-visualize` を実行したら、**必ず `flow-verify` を通す**。
 - サンプルは `examples/` に**シナリオ単位のフォルダ**で置いている（`examples/README.md` に一覧）。
 
 ## 設計原則（両対応）
@@ -31,8 +34,9 @@ business-flow-visualizer/
 ├── docs/SPEC.md               記法仕様（v0.2）★中核
 ├── examples/{番号}-{名前}/     シナリオ集（概要・ヒアリング記録・.flow・.html）
 ├── .claude/skills/
+│   ├── flow-interview/SKILL.md
 │   ├── flow-visualize/SKILL.md
-│   └── flow-interview/SKILL.md
+│   └── flow-verify/SKILL.md
 ├── .codex/skills/             → ../../.claude/skills/* への symlink
 ├── LICENSE / NOTICE           Apache-2.0（公開時に配置）
 └── README.md                  人間向け・両対応インストール手順
