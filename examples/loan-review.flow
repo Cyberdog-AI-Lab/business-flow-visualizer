@@ -29,8 +29,8 @@ steps:
   - id: c1
     cond: 書類に不備?
     from: n2
-    yes: n3
-    no:  par1
+    then: n3
+    else:  par1
 
   - id: n3
     at: [営業窓口, Day1]

@@ -1,0 +1,141 @@
+# flow-notation v0.2 — 自動車部品工場：受注→出荷 (AS-IS)
+# 出典: 工場職員（製造課）＋エンジニア（生産技術）へのヒアリング
+roles:      [自動車メーカー#社外, 受注管理課, 生産管理課, 調達課, 部品サプライヤー#外部, 製造課, 品質保証課, 出荷課]
+# 生産計画と部品発注は同じ Day1 に起きるため、SPEC 2.2 に従い列の粒度を割っている
+timeline:   [Day0, Day1午前, Day1午後, Day2, Day3, Day4, Day5]
+milestones: { 生産計画確定: Day1午前, 製造完了: Day3, 出荷完了: Day5 }
+sla:
+  受注〜出荷リードタイム: { span: [Day0, Day5], limit: 5営業日 }
+  部品納入:               { span: [Day1午後, Day2], limit: 1営業日 }
+view:       AS-IS
+
+steps:
+  - start: 確定注文の受信
+    at: [自動車メーカー#社外, Day0]
+    trigger: 毎朝 EDI 自動受信
+
+  - id: r1
+    at: [受注管理課, Day0]
+    from: 確定注文の受信
+    act: 受注データを取り込み内容を確認する
+    by: 外部/EDI（メーカー指定）
+    artifact: 受注管理システム
+    op: 受注登録
+    time: 30分
+    freq: 毎日
+    issue: 内示と確定数の突合を Excel で手作業している
+    tobe: 内示差異の突合を自動チェック化
+
+  - id: c1
+    cond: 内示との差異が ±10% 超?
+    from: r1
+    then: r2
+    else:  p1
+
+  - id: r2
+    at: [受注管理課, Day0, 2]
+    from: c1
+    act: メーカー担当に数量差異を照会する
+    by: 人手/電話・メール
+    wait: 回答待ち 半日〜1日
+    rework: r1
+    issue: 回答が遅いと計画着手が翌日にずれる
+
+  - id: p1
+    at: [生産管理課, Day1午前]
+    from: c1
+    act: 生産計画を立案・確定する
+    by: システム/生産管理システム(MRP)
+    artifact: 生産計画
+    op: 計画確定
+    time: 2時間
+    milestone: 生産計画確定
+
+  # 計画確定後、部品発注と製造準備が並行で走る
+  - par: par1
+    from: p1
+    to: [b1, m0]
+
+  - id: b1
+    at: [調達課, Day1午後]
+    from: par1
+    act: 不足部品を発注する
+    by: 外部/EDI発注
+    artifact: 発注データ
+    op: 発注送信
+
+  - id: s1
+    at: [部品サプライヤー#外部, Day2]
+    from: b1
+    act: 部品を納入する
+    by: 外部/納品・受入検収
+    artifact: 納品書
+    op: 受入計上
+    wait: 部品入荷待ち
+    on_overdue: -> 調達課より納期督促
+    issue: 遅延の一次連絡が電話で属人的
+
+  - id: m0
+    at: [製造課, Day2]
+    from: par1
+    act: 治具・段取りを準備する
+    by: 人手/段取り替え
+    time: 半日
+
+  # 部品入荷と段取り完了の両方がそろって製造着手
+  - id: m1
+    at: [製造課, Day3]
+    from: [s1, m0]
+    join: all
+    act: 加工・組立を行う
+    by: 人手/製造ライン
+    artifact: 製造指示書（紙）
+    op: 実績を手書き記入
+    time: 1日
+    issue: 日報が紙で、実績入力は翌朝まとめて。実績がリアルタイムに見えない
+    tobe: MES で設備から実績を自動収集
+    milestone: 製造完了
+
+  - id: q1
+    at: [品質保証課, Day4]
+    from: m1
+    act: 出荷検査を行う
+    by: 人手/検査治具
+    artifact: 検査成績書
+    op: 作成
+    wait: 検査待ち 半日
+    time: 2時間
+
+  - except: 検査NG?
+    from: q1
+    ng: m2
+    ok: h1
+
+  - id: m2
+    at: [製造課, Day4]
+    from: q1
+    act: 手直しし再検査に回す
+    by: 人手/ライン外作業
+    rework: q1
+    issue: 手直しの記録が紙のみで後追いが困難
+
+  - id: h1
+    at: [出荷課, Day5]
+    from: q1
+    act: 梱包・ラベル貼りをして納品書を発行する
+    by: 人手/梱包ライン
+    artifact: 納品書
+    op: 発行
+
+  - id: h2
+    at: [出荷課, Day5, 2]
+    from: h1
+    act: ASN を送信し製品を出荷する
+    by: 外部/EDI(ASN)
+    artifact: ASN
+    op: 送信
+    milestone: 出荷完了
+
+  - end: 納入（メーカー受領）
+    at: [自動車メーカー#社外, Day5]
+    from: h2
