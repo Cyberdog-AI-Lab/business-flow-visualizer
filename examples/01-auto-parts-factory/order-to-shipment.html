@@ -18,6 +18,15 @@
   pre{margin:0;background:#0f172a;color:#e2e8f0;border-radius:8px;padding:14px;
     font-size:11.5px;line-height:1.55;overflow-x:auto;
     font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  /* 用語（マウスオーバーで説明が出る） */
+  .term{fill:#1d4ed8;text-decoration:underline dotted;cursor:help}
+  .gl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:12.5px;line-height:1.7}
+  .gl dt{font-weight:700;color:#1d4ed8;white-space:nowrap}
+  .gl dd{margin:0;color:#334155}
+  #tip{position:fixed;z-index:50;max-width:320px;padding:8px 11px;border-radius:8px;
+    background:#0f172a;color:#f1f5f9;font-size:12px;line-height:1.6;
+    box-shadow:0 6px 20px rgba(15,23,42,.28);pointer-events:none;opacity:0;transition:opacity .12s}
+  #tip b{display:block;color:#93c5fd;margin-bottom:2px}
 </style>
 
 <div class="wrap">
@@ -118,11 +127,11 @@
   <g>
     <rect x="210" y="250" width="150" height="48" rx="9" fill="#ecfeff" stroke="#0891b2" stroke-width="1.8"/>
     <text x="285" y="270" text-anchor="middle" font-size="11.5" fill="#0f172a">受注データを取り込む</text>
-    <text x="285" y="286" text-anchor="middle" font-size="9.5" fill="#0e7490">🔌社外システム/EDI ・⏱30分 ・毎日</text>
+    <text x="285" y="286" text-anchor="middle" font-size="9.5" fill="#0e7490">🔌社外システム/<tspan class="term" data-term="EDI" data-desc="電子データ交換。企業間で受発注や出荷のデータを決まった形式でやり取りする仕組み">EDI<title>EDI：電子データ交換。企業間で受発注や出荷のデータを決まった形式でやり取りする仕組み</title></tspan> ・⏱30分 ・毎日</text>
     <circle cx="354" cy="256" r="8" fill="#fef2f2" stroke="#dc2626"/><text x="354" y="260" text-anchor="middle" font-size="9" fill="#dc2626">⚠</text>
     <rect x="213" y="302" width="144" height="20" rx="6" fill="#ecfdf5" stroke="#059669"/><text x="285" y="316" text-anchor="middle" font-size="9.5" fill="#065f46">🗄受注管理システム ・受注登録</text>
   </g>
-  <g><polygon points="410,286 456,314 410,342 364,314" fill="#fffbeb" stroke="#d97706" stroke-width="1.6"/><text x="410" y="311" text-anchor="middle" font-size="9" fill="#92400e">内示差異</text><text x="410" y="322" text-anchor="middle" font-size="9" fill="#92400e">±10%超?</text></g>
+  <g><polygon points="410,286 456,314 410,342 364,314" fill="#fffbeb" stroke="#d97706" stroke-width="1.6"/><text x="410" y="311" text-anchor="middle" font-size="9" fill="#92400e"><tspan class="term" data-term="内示" data-desc="確定前にメーカーから示される見込みの注文数量。確定注文とは数量が変わることがある">内示<title>内示：確定前にメーカーから示される見込みの注文数量。確定注文とは数量が変わることがある</title></tspan>差異</text><text x="410" y="322" text-anchor="middle" font-size="9" fill="#92400e">±10%超?</text></g>
   <g>
     <rect x="210" y="330" width="150" height="48" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
     <text x="285" y="350" text-anchor="middle" font-size="11.5" fill="#0f172a">数量差異を照会する</text>
@@ -135,7 +144,7 @@
     <rect x="464" y="436" width="142" height="19" rx="9" fill="#f5f3ff" stroke="#7c3aed"/><text x="535" y="450" text-anchor="middle" font-size="9.5" fill="#6b21a8">★ 生産計画確定</text>
     <rect x="460" y="462" width="150" height="48" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
     <text x="535" y="482" text-anchor="middle" font-size="11.5" fill="#0f172a">生産計画を立案・確定する</text>
-    <text x="535" y="498" text-anchor="middle" font-size="9.5" fill="#64748b">🖥システム/生産管理(MRP) ・⏱2時間</text>
+    <text x="535" y="498" text-anchor="middle" font-size="9.5" fill="#64748b">🖥システム/生産管理(<tspan class="term" data-term="MRP" data-desc="資材所要量計画。生産計画から必要な部品と数量・時期を割り出す仕組み">MRP<title>MRP：資材所要量計画。生産計画から必要な部品と数量・時期を割り出す仕組み</title></tspan>) ・⏱2時間</text>
     <rect x="466" y="514" width="138" height="20" rx="6" fill="#ecfdf5" stroke="#059669"/><text x="535" y="528" text-anchor="middle" font-size="9.5" fill="#065f46">📄生産計画 ・計画確定</text>
   </g>
 
@@ -150,7 +159,7 @@
     <rect x="966" y="786" width="138" height="19" rx="9" fill="#fff7ed" stroke="#ea580c"/><text x="1035" y="800" text-anchor="middle" font-size="9.5" fill="#c2410c">⏳ 部品入荷待ち</text>
     <rect x="960" y="806" width="150" height="48" rx="9" fill="#ecfeff" stroke="#0891b2" stroke-width="1.8"/>
     <text x="1035" y="826" text-anchor="middle" font-size="11.5" fill="#0f172a">部品を納入する</text>
-    <text x="1035" y="842" text-anchor="middle" font-size="9.5" fill="#0e7490">🔌社外/納品・受入検収</text>
+    <text x="1035" y="842" text-anchor="middle" font-size="9.5" fill="#0e7490">🔌社外/納品・<tspan class="term" data-term="受入検収" data-desc="納入された部品を検査し、数量と品質を確認して受け入れる手続き">受入検収<title>受入検収：納入された部品を検査し、数量と品質を確認して受け入れる手続き</title></tspan></text>
     <circle cx="1104" cy="812" r="8" fill="#fef2f2" stroke="#dc2626"/><text x="1104" y="816" text-anchor="middle" font-size="9" fill="#dc2626">⚠</text>
     <rect x="966" y="858" width="138" height="20" rx="6" fill="#ecfdf5" stroke="#059669"/><text x="1035" y="872" text-anchor="middle" font-size="9.5" fill="#065f46">📄納品書 ・受入計上</text>
     <rect x="960" y="882" width="150" height="20" rx="10" fill="#fffbeb" stroke="#d97706"/><text x="1035" y="896" text-anchor="middle" font-size="9.5" fill="#b45309">⏰ 期限超過 → 納期督促</text>
@@ -158,11 +167,11 @@
 
   <g>
     <rect x="710" y="978" width="150" height="48" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
-    <text x="785" y="998" text-anchor="middle" font-size="11.5" fill="#0f172a">治具・段取りを準備する</text>
-    <text x="785" y="1014" text-anchor="middle" font-size="9.5" fill="#64748b">👤人手/段取り替え ・⏱半日</text>
+    <text x="785" y="998" text-anchor="middle" font-size="11.5" fill="#0f172a"><tspan class="term" data-term="治具" data-desc="加工や組立のときに部品を正しい位置で固定するための道具">治具<title>治具：加工や組立のときに部品を正しい位置で固定するための道具</title></tspan>・段取りを準備する</text>
+    <text x="785" y="1014" text-anchor="middle" font-size="9.5" fill="#64748b">👤人手/<tspan class="term" data-term="段取り替え" data-desc="生産する品種を切り替えるために、治具や設定を入れ替える作業">段取り替え<title>段取り替え：生産する品種を切り替えるために、治具や設定を入れ替える作業</title></tspan> ・⏱半日</text>
   </g>
   <g>
-    <rect x="1198" y="950" width="174" height="20" rx="6" fill="#faf5ff" stroke="#7c3aed" stroke-dasharray="4 3"/><text x="1285" y="964" text-anchor="middle" font-size="9.5" fill="#6b21a8">改善案 MESで実績を自動収集</text>
+    <rect x="1198" y="950" width="174" height="20" rx="6" fill="#faf5ff" stroke="#7c3aed" stroke-dasharray="4 3"/><text x="1285" y="964" text-anchor="middle" font-size="9.5" fill="#6b21a8">改善案 <tspan class="term" data-term="MES" data-desc="製造実行システム。設備や作業者から製造実績をその場で集める仕組み">MES<title>MES：製造実行システム。設備や作業者から製造実績をその場で集める仕組み</title></tspan>で実績を自動収集</text>
     <rect x="1210" y="978" width="150" height="48" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
     <text x="1285" y="998" text-anchor="middle" font-size="11.5" fill="#0f172a">加工・組立を行う</text>
     <text x="1285" y="1014" text-anchor="middle" font-size="9.5" fill="#64748b">👤人手/製造ライン ・⏱1日</text>
@@ -182,7 +191,7 @@
     <rect x="1460" y="1150" width="150" height="48" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
     <text x="1535" y="1170" text-anchor="middle" font-size="11.5" fill="#0f172a">出荷検査を行う</text>
     <text x="1535" y="1186" text-anchor="middle" font-size="9.5" fill="#64748b">👤人手/検査治具 ・⏱2時間</text>
-    <rect x="1466" y="1202" width="138" height="20" rx="6" fill="#ecfdf5" stroke="#059669"/><text x="1535" y="1216" text-anchor="middle" font-size="9.5" fill="#065f46">📄検査成績書 ・作成</text>
+    <rect x="1466" y="1202" width="138" height="20" rx="6" fill="#ecfdf5" stroke="#059669"/><text x="1535" y="1216" text-anchor="middle" font-size="9.5" fill="#065f46">📄<tspan class="term" data-term="検査成績書" data-desc="検査の結果を記録した書類。出荷する製品の品質を証明する">検査成績書<title>検査成績書：検査の結果を記録した書類。出荷する製品の品質を証明する</title></tspan> ・作成</text>
   </g>
   <g><polygon points="1660,1146 1706,1174 1660,1202 1614,1174" fill="#fef2f2" stroke="#dc2626" stroke-width="1.6"/><text x="1660" y="1178" text-anchor="middle" font-size="9" fill="#b91c1c">検査NG?</text></g>
 
@@ -194,12 +203,11 @@
   </g>
   <g>
     <rect x="1710" y="1362" width="150" height="48" rx="9" fill="#ecfeff" stroke="#0891b2" stroke-width="1.8"/>
-    <text x="1785" y="1382" text-anchor="middle" font-size="11.5" fill="#0f172a">ASNを送信し出荷する</text>
+    <text x="1785" y="1382" text-anchor="middle" font-size="11.5" fill="#0f172a"><tspan class="term" data-term="ASN" data-desc="事前出荷通知。何をいつ送るかを出荷前にメーカーへ知らせるデータ">ASN<title>ASN：事前出荷通知。何をいつ送るかを出荷前にメーカーへ知らせるデータ</title></tspan>を送信し出荷する</text>
     <text x="1785" y="1398" text-anchor="middle" font-size="9.5" fill="#0e7490">🔌社外システム/EDI(ASN) ・送信</text>
     <text x="1854" y="1358" font-size="12" fill="#7c3aed">★</text>
   </g>
 </svg>
-
   </div>
 
   <div class="card">
@@ -227,8 +235,22 @@
     <ul style="margin:0;padding-left:20px;font-size:12.5px;line-height:1.75;color:#0c4a6e">
       <li><b>装飾を1件省略：</b> 受注管理課 Day0 は「受注データを取り込む」「数量差異を照会する」の2ノードを同一セルに積んでいるため、SPEC 5.6 の順に従い改善案（TO-BE「内示差異の自動チェック化」）の表示を省略し、課題は ⚠ バッジに縮退した。省略した内容は下の記法ソースに残っている。</li>
       <li><b>列の粒度：</b> 生産計画（Day1）と部品発注（Day1）が同日のため、SPEC 2.2 に従い Day1 を「午前／午後」に割った。これにより並行開始バーからの矢印が逆行しない。</li>
+      <li><b>用語：</b> 点線の下線が付いた語はマウスを乗せると説明が出る。図の下の「用語」一覧でも同じ内容を読める。</li>
     </ul>
   </div>
+  <div class="card">
+    <h2>用語</h2>
+    <dl class="gl"><dt>EDI</dt><dd>電子データ交換。企業間で受発注や出荷のデータを決まった形式でやり取りする仕組み</dd>
+      <dt>内示</dt><dd>確定前にメーカーから示される見込みの注文数量。確定注文とは数量が変わることがある</dd>
+      <dt>MRP</dt><dd>資材所要量計画。生産計画から必要な部品と数量・時期を割り出す仕組み</dd>
+      <dt>受入検収</dt><dd>納入された部品を検査し、数量と品質を確認して受け入れる手続き</dd>
+      <dt>治具</dt><dd>加工や組立のときに部品を正しい位置で固定するための道具</dd>
+      <dt>段取り替え</dt><dd>生産する品種を切り替えるために、治具や設定を入れ替える作業</dd>
+      <dt>MES</dt><dd>製造実行システム。設備や作業者から製造実績をその場で集める仕組み</dd>
+      <dt>検査成績書</dt><dd>検査の結果を記録した書類。出荷する製品の品質を証明する</dd>
+      <dt>ASN</dt><dd>事前出荷通知。何をいつ送るかを出荷前にメーカーへ知らせるデータ</dd></dl>
+  </div>
+
   <div class="card">
     <h2>記法ソース（.flow）</h2>
     <pre># flow-notation v0.2 — 自動車部品工場：受注→出荷 (AS-IS)
@@ -242,6 +264,18 @@ sla:
   部品納入:               { span: [Day1午後, Day2], limit: 1営業日 }
 view:       AS-IS
 
+# 業務を知らない人向けの用語補足。本文中の [[用語]] がツールチップになる
+glossary:
+  EDI:      電子データ交換。企業間で受発注や出荷のデータを決まった形式でやり取りする仕組み
+  内示:     確定前にメーカーから示される見込みの注文数量。確定注文とは数量が変わることがある
+  MRP:      { desc: 資材所要量計画。生産計画から必要な部品と数量・時期を割り出す仕組み, aka: [生産管理システム] }
+  MES:      { desc: 製造実行システム。設備や作業者から製造実績をその場で集める仕組み, aka: [製造実行システム] }
+  治具:     加工や組立のときに部品を正しい位置で固定するための道具
+  段取り替え: 生産する品種を切り替えるために、治具や設定を入れ替える作業
+  受入検収: 納入された部品を検査し、数量と品質を確認して受け入れる手続き
+  検査成績書: 検査の結果を記録した書類。出荷する製品の品質を証明する
+  ASN:      事前出荷通知。何をいつ送るかを出荷前にメーカーへ知らせるデータ
+
 steps:
   - start: 確定注文の受信
     at: [自動車メーカー#社外, Day0]
@@ -251,16 +285,16 @@ steps:
     at: [受注管理課, Day0]
     from: 確定注文の受信
     act: 受注データを取り込み内容を確認する
-    by: 外部/EDI（メーカー指定）
+    by: 外部/[[EDI]]（メーカー指定）
     artifact: 受注管理システム
     op: 受注登録
     time: 30分
     freq: 毎日
-    issue: 内示と確定数の突合を Excel で手作業している
+    issue: &quot;[[内示]]と確定数の突合を Excel で手作業している&quot;
     tobe: 内示差異の突合を自動チェック化
 
   - id: c1
-    cond: 内示との差異が ±10% 超?
+    cond: &quot;[[内示]]との差異が ±10% 超?&quot;
     from: r1
     then: r2
     else:  p1
@@ -278,7 +312,7 @@ steps:
     at: [生産管理課, Day1午前]
     from: c1
     act: 生産計画を立案・確定する
-    by: システム/生産管理システム(MRP)
+    by: システム/生産管理システム([[MRP]])
     artifact: 生産計画
     op: 計画確定
     time: 2時間
@@ -301,7 +335,7 @@ steps:
     at: [部品サプライヤー#外部, Day2]
     from: b1
     act: 部品を納入する
-    by: 外部/納品・受入検収
+    by: 外部/納品・[[受入検収]]
     artifact: 納品書
     op: 受入計上
     wait: 部品入荷待ち
@@ -311,8 +345,8 @@ steps:
   - id: m0
     at: [製造課, Day2]
     from: par1
-    act: 治具・段取りを準備する
-    by: 人手/段取り替え
+    act: &quot;[[治具]]・段取りを準備する&quot;
+    by: 人手/[[段取り替え]]
     time: 半日
 
   # 部品入荷と段取り完了の両方がそろって製造着手
@@ -326,7 +360,7 @@ steps:
     op: 実績を手書き記入
     time: 1日
     issue: 日報が紙で、実績入力は翌朝まとめて。実績がリアルタイムに見えない
-    tobe: MES で設備から実績を自動収集
+    tobe: &quot;[[MES]] で設備から実績を自動収集&quot;
     milestone: 製造完了
 
   - id: q1
@@ -334,7 +368,7 @@ steps:
     from: m1
     act: 出荷検査を行う
     by: 人手/検査治具
-    artifact: 検査成績書
+    artifact: &quot;[[検査成績書]]&quot;
     op: 作成
     wait: 検査待ち 半日
     time: 2時間
@@ -363,7 +397,7 @@ steps:
   - id: h2
     at: [出荷課, Day5, 2]
     from: h1
-    act: ASN を送信し製品を出荷する
+    act: &quot;[[ASN]] を送信し製品を出荷する&quot;
     by: 外部/EDI(ASN)
     artifact: ASN
     op: 送信
@@ -375,3 +409,26 @@ steps:
 </pre>
   </div>
 </div>
+
+<div id="tip"></div>
+<script>
+(function(){
+  var tip=document.getElementById('tip');
+  function show(e){
+    var el=e.target.closest('.term'); if(!el) return;
+    tip.innerHTML='<b>'+el.getAttribute('data-term')+'</b>'+el.getAttribute('data-desc');
+    tip.style.opacity=1; move(e);
+  }
+  function move(e){
+    var pad=14, w=tip.offsetWidth, h=tip.offsetHeight;
+    var x=e.clientX+pad, y=e.clientY+pad;
+    if(x+w>innerWidth-8)  x=e.clientX-w-pad;
+    if(y+h>innerHeight-8) y=e.clientY-h-pad;
+    tip.style.left=x+'px'; tip.style.top=y+'px';
+  }
+  function hide(){ tip.style.opacity=0; }
+  document.addEventListener('mouseover',show);
+  document.addEventListener('mousemove',function(e){ if(tip.style.opacity==1) move(e); });
+  document.addEventListener('mouseout',function(e){ if(e.target.closest('.term')) hide(); });
+})();
+</script>

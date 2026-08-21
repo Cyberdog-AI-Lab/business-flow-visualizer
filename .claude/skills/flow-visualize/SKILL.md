@@ -21,7 +21,7 @@ description: >-
 
 ### 1. パース
 
-YAML として読む。`roles` / `timeline` / `steps` を取得。`milestones` / `sla` / `view` は任意。
+YAML として読む。`roles` / `timeline` / `steps` を取得。`milestones` / `sla` / `view` / `glossary` は任意。
 不正・未定義キーは `docs/SPEC.md` の語彙表に照らし、勝手に解釈せず警告として本文に注記する。
 
 ### 2. グリッド座標を計算（決め打ち配置）
@@ -71,6 +71,17 @@ NODE_W  = 150 ; NODE_H = 48
 - `sla`：`span` の2時点の列位置にまたがる **青ブラケット＋バッジ**（`limit` を表示）。
 - `milestones` / `milestone:`：列位置に **紫の破線縦線＋★ラベル**。
 
+### 5.5 用語ツールチップ（v0.3）
+
+本文中の `[[用語]]` / `[[表示\|用語]]` を `glossary:` と突き合わせて置き換える（`docs/SPEC.md §4.5 / §5.7`）。
+
+- SVG では該当部分を `<tspan class="term" data-term="用語" data-desc="説明">表示文字</tspan>` にし、
+  **`<title>説明</title>` を必ず同梱**する（JS が動かなくてもブラウザ標準のツールチップで読める）。
+- `.term` は点線の下線＋青系の文字色（テンプレの CSS が持っている）。
+- **図の下の用語集カードは省略しない。** `{{GLOSSARY}}` に `<dt>用語</dt><dd>説明</dd>` を並べる。
+  並び順は `glossary:` の定義順ではなく**図に登場した順**。図で参照していない用語は出さない。
+- `glossary:` に無い用語を参照していたら、そのまま文字を出し、注記カードに書く（`docs/SPEC.md §7`）。
+
 ### 6. 凡例を自動生成
 
 その図に実際に登場した要素だけを凡例に出す（`assets/template.html` の凡例スニペット参照）。
@@ -78,7 +89,8 @@ NODE_W  = 150 ; NODE_H = 48
 ### 7. テンプレに流し込む
 
 `assets/template.html` を土台にする（CSS変数・`.board`（横スクロール）枠・凡例/ソースパネルの雛形入り）。
-4か所の目印（TITLE / SVG / LEGEND / SOURCE）を差し替える。
+5か所の目印（TITLE / SVG / LEGEND / GLOSSARY / SOURCE）を差し替える。
+`glossary:` が無い図では、用語カードごと削除してよい（空の見出しを残さない）。
 
 > **必ず、テンプレ内の HTML コメントを除去してから置換する。**
 > コメントには目印の説明が含まれるため、単純な文字列置換をするとコメント内にも本文が流し込まれ、
@@ -87,7 +99,8 @@ NODE_W  = 150 ; NODE_H = 48
 
 ### 8. 破綻チェック
 
-- 目印（TITLE/SVG/LEGEND/SOURCE）が残っていない。`<svg>` は1つだけ。`<svg>` より前に未閉じの HTML コメントが無い。
+- 目印（TITLE/SVG/LEGEND/GLOSSARY/SOURCE）が残っていない。`<svg>` は1つだけ。`<svg>` より前に未閉じの HTML コメントが無い。
+- `[[` `]]` が生成物に素通しで残っていない（すべて `.term` に置換済み）。`.term` の数と `<title>` の数が一致する。
 - 図中に `fork` / `join: all` などの英語専門語が出ていない（`docs/SPEC.md §5.5`）。
 
 - ページ本体が横スクロールしない（広い図は `.board` 内だけをスクロール）。
