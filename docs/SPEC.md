@@ -356,9 +356,7 @@ DSL のキー（`par` / `join: all`）は書き手向けの構文なので変え
 
 | ファイル | 内容 |
 |---------|------|
-| `examples/01-monthly-invoice/` | 月次請求（現状フロー）。基本語彙の最小例 |
-| `examples/02-loan-review/` | 住宅ローン審査。並行・合流・期限・社外連携を一通り |
-| `examples/03-auto-parts-factory/` | 自動車部品工場の受注→出荷。ヒアリングから起こした実寸大の例（`.html` 付き） |
+| `examples/01-auto-parts-factory/` | 自動車部品工場の受注→出荷。ヒアリングから起こした実寸大の例。記法の語彙をひととおり含む（`.html` 付き） |
 
 各フォルダには `シナリオ概要.md`、（ヒアリング由来なら）`ヒアリング時の会話.md`、`.flow`、`.html` を置く。
 一覧は `examples/README.md`。

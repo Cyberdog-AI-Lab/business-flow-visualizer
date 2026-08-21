@@ -15,7 +15,7 @@
 
 ## クイックスタート
 
-1. [`examples/01-monthly-invoice/`](examples/01-monthly-invoice/) を見て記法をつかむ。
+1. [`examples/01-auto-parts-factory/`](examples/01-auto-parts-factory/) を見て記法をつかむ。
 2. エージェントに「この `.flow` を図にして」と頼む（`flow-visualize` が起動）。
 3. ゼロから作るなら「この業務をヒアリングして `.flow` にして」（`flow-interview` が起動）。
 
@@ -25,9 +25,7 @@
 
 | シナリオ | 内容 | 出典 |
 |---------|------|------|
-| [01-monthly-invoice](examples/01-monthly-invoice/) | 月次請求。基本語彙の最小例 | 作例 |
-| [02-loan-review](examples/02-loan-review/) | 住宅ローン審査。並行・期限・社外連携（v0.2）を一通り | 作例 |
-| [03-auto-parts-factory](examples/03-auto-parts-factory/) | 自動車部品工場の受注→出荷。8役割×7列の実寸大 | ヒアリング |
+| [01-auto-parts-factory](examples/01-auto-parts-factory/) | 自動車部品工場の受注→出荷。8役割×7列の実寸大 | ヒアリング |
 
 一覧は [examples/README.md](examples/README.md)。
 
