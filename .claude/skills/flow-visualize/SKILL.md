@@ -32,7 +32,7 @@ YAML として読む。`roles` / `timeline` / `steps` を取得。`milestones` /
 LABEL_W = 160      # 左の役割ラベル幅
 HEADER_H = 56      # 上の時系列ヘッダ高
 LANE_H  = 172      # 1レーンの高さ
-COL_W   = 250      # 1列の幅（timeline が多いなら 220〜280 で調整）
+COL_W   = 250      # 分岐が無い図の既定。cond/except を自動配置するなら 300 以上（docs/SPEC.md §2.1「列幅の下限」）
 NODE_W  = 150 ; NODE_H = 48
 ```
 
@@ -42,6 +42,8 @@ NODE_W  = 150 ; NODE_H = 48
 - キャンバス：`width = LABEL_W + COL_W * 列数`、`height = HEADER_H + LANE_H * 行数`（＋下部余白）。
 - **セル中心** `cellCenter(役割, 時点) = (colCenter(timeIndex), laneCenter(roleIndex))`。
 - **同一セルに複数ノード**：`at` のスロット番号順（無ければ記述順）に、セル中心から縦に等間隔（±40px 目安）で積む（`docs/SPEC.md §2.2`）。
+- **最初に列幅を決める**：`.flow` に `at` を持たない `cond` / `except` があれば **`COL_W = 300`**。
+  250 のままだと分岐の前後の矢印が片側 4px になり、**線が見えなくなる**（`docs/SPEC.md §2.1`）。
 - **`at` を持たない `cond`/`except`/`par`/`join`**：`docs/SPEC.md §2.1` の自動配置に従う（cond/except＝`from` の半列右・同レーン、fork＝`from` の半列右バー、join＝合流ノードの半列左バー）。`at` があればそれを優先。
 
 ### 3. 各ステップをノードに変換
@@ -118,6 +120,7 @@ NODE_W  = 150 ; NODE_H = 48
 **描画**
 - 矢印がテキストを貫通していない。
 - 分岐ラベルが**枝の向きと一致**し、線・ノード・チップと重なっていない（`docs/SPEC.md §5.6`）。
+- **分岐の前後の矢印が目で見える長さ（20px 以上）ある。** 短ければ `COL_W` が足りない。
 - ★マイルストーンが、どのノードの節目か一意に読める。
 - ノード・チップ・ピル・ラベルが互いに重なっていない。
 
