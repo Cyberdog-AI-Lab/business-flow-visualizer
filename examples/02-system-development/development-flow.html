@@ -1,0 +1,406 @@
+<title>システム開発：開発依頼 → 納品（現状フロー）</title>
+
+<style>
+  :root{ --bg:#f8fafc; --ink:#0f172a; --muted:#64748b; }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;}
+  .wrap{max-width:1500px;margin:0 auto;padding:24px 20px 60px}
+  h1{font-size:20px;margin:0 0 12px}
+  .board{overflow-x:auto;border:1px solid #e2e8f0;border-radius:12px;background:#fff;
+    box-shadow:0 1px 3px rgba(15,23,42,.06)}
+  svg{display:block}
+  .card{border:1px solid #e2e8f0;border-radius:12px;background:#fff;padding:16px 18px;margin-top:16px}
+  .card h2{font-size:14px;margin:0 0 12px}
+  .legend{display:flex;flex-wrap:wrap;gap:10px 16px}
+  .lg{display:flex;align-items:center;gap:8px;font-size:12.5px;color:#334155}
+  .sw{width:24px;height:16px;border-radius:4px;flex:0 0 auto}
+  pre{margin:0;background:#0f172a;color:#e2e8f0;border-radius:8px;padding:14px;
+    font-size:11.5px;line-height:1.55;overflow-x:auto;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  /* 用語（マウスオーバーで説明が出る） */
+  .term{fill:#1d4ed8;text-decoration:underline dotted;cursor:help}
+  .gl{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:12.5px;line-height:1.7}
+  .gl dt{font-weight:700;color:#1d4ed8;white-space:nowrap}
+  .gl dd{margin:0;color:#334155}
+  #tip{position:fixed;z-index:50;max-width:320px;padding:8px 11px;border-radius:8px;
+    background:#0f172a;color:#f1f5f9;font-size:12px;line-height:1.6;
+    box-shadow:0 6px 20px rgba(15,23,42,.28);pointer-events:none;opacity:0;transition:opacity .12s}
+  #tip b{display:block;color:#93c5fd;margin-bottom:2px}
+</style>
+
+<div class="wrap">
+  <h1>システム開発：開発依頼 → 納品（現状フロー）</h1>
+
+  <div class="board">
+    
+    <svg viewBox="0 0 4660 620" width="4660" height="620" xmlns="http://www.w3.org/2000/svg" font-family="inherit">
+  <defs>
+    <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#334155"/></marker>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#dc2626"/></marker>
+  </defs>
+  <rect x="0" y="56"  width="4660" height="172" fill="#f1f5f9"/>
+  <rect x="0" y="228" width="4660" height="172" fill="#ffffff"/>
+  <rect x="0" y="400" width="4660" height="172" fill="#f8fafc"/>
+  <g stroke="#e8edf3"><line x1="160" y1="228" x2="4660" y2="228"/><line x1="160" y1="400" x2="4660" y2="400"/><line x1="160" y1="572" x2="4660" y2="572"/></g>
+  <g stroke="#eef2f7"><line x1="460" y1="56" x2="460" y2="572"/><line x1="760" y1="56" x2="760" y2="572"/><line x1="1060" y1="56" x2="1060" y2="572"/><line x1="1360" y1="56" x2="1360" y2="572"/><line x1="1660" y1="56" x2="1660" y2="572"/><line x1="1960" y1="56" x2="1960" y2="572"/><line x1="2260" y1="56" x2="2260" y2="572"/><line x1="2560" y1="56" x2="2560" y2="572"/><line x1="2860" y1="56" x2="2860" y2="572"/><line x1="3160" y1="56" x2="3160" y2="572"/><line x1="3460" y1="56" x2="3460" y2="572"/><line x1="3760" y1="56" x2="3760" y2="572"/><line x1="4060" y1="56" x2="4060" y2="572"/><line x1="4360" y1="56" x2="4360" y2="572"/></g>
+  <g stroke="#7c3aed" stroke-width="1.6" stroke-dasharray="6 5" opacity="0.35">
+    <line x1="1810" y1="56" x2="1810" y2="572"/><line x1="3610" y1="56" x2="3610" y2="572"/><line x1="4510" y1="56" x2="4510" y2="572"/>
+  </g>
+  <rect x="0" y="0" width="4660" height="56" fill="#0f172a"/>
+  <text x="80" y="24" fill="#e2e8f0" font-size="11.5" text-anchor="middle">役割 \ 時系列</text>
+  <line x1="160" y1="0" x2="160" y2="572" stroke="#e2e8f0"/>
+  <g fill="#cbd5e1" font-size="11.5" text-anchor="middle">
+    <text x="310" y="21">相談</text><text x="610" y="21">現状分析</text><text x="910" y="21">課題合意</text><text x="1210" y="21">対象決定</text>
+    <text x="1510" y="21">第1回見積</text><text x="1810" y="21">第1回発注</text><text x="2110" y="21">詳細ヒアリング</text><text x="2410" y="21">課題整理</text>
+    <text x="2710" y="21">業務改善検討</text><text x="3010" y="21">成果物合意</text><text x="3310" y="21">第2回見積</text><text x="3610" y="21">第2回発注</text>
+    <text x="3910" y="21">システム開発</text><text x="4210" y="21">検収</text><text x="4510" y="21">納品</text>
+  </g>
+  <g font-size="10.5" text-anchor="middle" fill="#ffffff">
+    <g transform="translate(1810,0)"><rect x="-52" y="30" width="104" height="20" rx="10" fill="#7c3aed"/><text y="44">★ 第1回発注</text></g>
+    <g transform="translate(3610,0)"><rect x="-52" y="30" width="104" height="20" rx="10" fill="#7c3aed"/><text y="44">★ 第2回発注</text></g>
+    <g transform="translate(4510,0)"><rect x="-36" y="30" width="72" height="20" rx="10" fill="#7c3aed"/><text y="44">★ 納品</text></g>
+  </g>
+  <g font-size="12" text-anchor="middle" fill="#1e293b">
+    <text x="80" y="138">顧客</text><text x="80" y="154" font-size="9.5" fill="#94a3b8">社外</text>
+    <text x="80" y="314">上流工程担当</text>
+    <text x="80" y="486">開発担当</text>
+  </g>
+
+  <!-- edges -->
+  <path d="M330,159 C420,200 480,250 529,286" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <path d="M685,314 L829,314" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <path d="M985,314 L1129,314" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <path d="M1285,314 L1429,314" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <path d="M1585,300 C1650,242 1700,182 1729,158" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <path d="M1885,142 L1906,142" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <path d="M1975,166 C2020,220 2040,262 2050,284" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <text x="2062" y="272" text-anchor="middle" font-size="10.5" fill="#b45309">はい</text>
+  <path d="M1946,164 C1902,220 1872,262 1850,284" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <text x="1850" y="215" text-anchor="middle" font-size="10.5" fill="#166534">いいえ</text>
+  <path d="M1885,314 L1906,314" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <path d="M1975,290 C2008,240 2018,190 2041,162" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <text x="2050" y="180" text-anchor="middle" font-size="10.5" fill="#b45309">はい</text>
+  <path d="M1960,344 C1960,392 1520,392 1512,366" fill="none" stroke="#dc2626" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#ar)"/>
+  <text x="1735" y="378" text-anchor="middle" font-size="10" fill="#dc2626">いいえ（見積もりへ戻る）</text>
+  <path d="M2185,314 L2329,314" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <path d="M2485,314 L2629,314" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <path d="M2785,314 L2929,314" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <path d="M3085,314 L3229,314" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <path d="M3385,300 C3450,242 3500,182 3529,158" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <path d="M3685,142 L3706,142" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <path d="M3778,168 C3852,252 3862,400 3858,456" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <text x="3902" y="436" text-anchor="middle" font-size="10.5" fill="#b45309">はい</text>
+  <path d="M3746,164 C3702,220 3672,262 3650,284" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <text x="3650" y="215" text-anchor="middle" font-size="10.5" fill="#166534">いいえ</text>
+  <path d="M3685,314 L3706,314" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <path d="M3778,290 C3798,240 3816,192 3841,162" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <text x="3850" y="180" text-anchor="middle" font-size="10.5" fill="#b45309">はい</text>
+  <path d="M3760,344 C3760,392 3320,392 3312,366" fill="none" stroke="#dc2626" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#ar)"/>
+  <text x="3535" y="378" text-anchor="middle" font-size="10" fill="#dc2626">いいえ（見積もりへ戻る）</text>
+  <path d="M3985,478 C4100,470 4130,300 4136,170" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <path d="M4285,142 L4306,142" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <path d="M4382,166 C4424,300 4482,428 4498,456" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+  <text x="4446" y="264" text-anchor="middle" font-size="10.5" fill="#166534">できる</text>
+  <path d="M4338,166 C4292,300 4060,466 3992,484" fill="none" stroke="#dc2626" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#ar)"/>
+  <text x="4180" y="330" text-anchor="middle" font-size="10.5" fill="#dc2626">できない（開発へ戻る）</text>
+  <path d="M4510,462 C4510,380 4510,220 4510,164" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
+
+  <!-- nodes -->
+  <g><rect x="245" y="125" width="130" height="34" rx="17" fill="#e2e8f0" stroke="#475569" stroke-width="1.6"/><text x="310" y="146" text-anchor="middle" font-size="11" fill="#0f172a">顧客からの開発依頼</text><text x="310" y="112" text-anchor="middle" font-size="9.5" fill="#64748b">きっかけ：デジタル化・システム化の相談を受ける</text></g>
+  <g><rect x="2045" y="125" width="130" height="34" rx="17" fill="#fef2f2" stroke="#dc2626" stroke-width="1.6"/><text x="2110" y="141" text-anchor="middle" font-size="10.5" fill="#991b1b">終了（第1回見送り）</text><text x="2110" y="154" text-anchor="middle" font-size="9" fill="#dc2626">例外終了</text></g>
+  <g><rect x="3845" y="125" width="130" height="34" rx="17" fill="#fef2f2" stroke="#dc2626" stroke-width="1.6"/><text x="3910" y="141" text-anchor="middle" font-size="10.5" fill="#991b1b">終了（第2回見送り）</text><text x="3910" y="154" text-anchor="middle" font-size="9" fill="#dc2626">例外終了</text></g>
+  <g><rect x="4445" y="125" width="130" height="34" rx="17" fill="#dcfce7" stroke="#16a34a" stroke-width="1.6"/><text x="4510" y="146" text-anchor="middle" font-size="11" fill="#14532d">納品完了</text></g>
+
+  <g>
+    <rect x="1735" y="118" width="150" height="48" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+    <text x="1810" y="139" text-anchor="middle" font-size="11" fill="#0f172a">第1回を発注するか</text><text x="1810" y="153" text-anchor="middle" font-size="11" fill="#0f172a">判断する</text>
+    <rect x="1741" y="170" width="138" height="19" rx="9" fill="#fff7ed" stroke="#ea580c"/><text x="1810" y="184" text-anchor="middle" font-size="9.5" fill="#c2410c">⏳ 顧客の判断待ち</text>
+  </g>
+  <g>
+    <rect x="3535" y="118" width="150" height="48" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+    <text x="3610" y="139" text-anchor="middle" font-size="11" fill="#0f172a">システム化に進むか</text><text x="3610" y="153" text-anchor="middle" font-size="11" fill="#0f172a">判断する</text>
+    <rect x="3541" y="170" width="138" height="19" rx="9" fill="#fff7ed" stroke="#ea580c"/><text x="3610" y="184" text-anchor="middle" font-size="9.5" fill="#c2410c">⏳ 顧客の判断待ち</text>
+  </g>
+  <g>
+    <rect x="4135" y="118" width="150" height="48" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+    <text x="4210" y="139" text-anchor="middle" font-size="11" fill="#0f172a">実業務で運用できるか</text><text x="4210" y="153" text-anchor="middle" font-size="11" fill="#0f172a">判断する</text>
+    <rect x="4141" y="170" width="138" height="19" rx="9" fill="#fff7ed" stroke="#ea580c"/><text x="4210" y="184" text-anchor="middle" font-size="9.5" fill="#c2410c">⏳ 顧客の判断待ち</text>
+  </g>
+
+  <g><polygon points="1960,114 2006,142 1960,170 1914,142" fill="#fffbeb" stroke="#d97706" stroke-width="1.6"/><text x="1960" y="139" text-anchor="middle" font-size="8.5" fill="#92400e">第1回を</text><text x="1960" y="150" text-anchor="middle" font-size="8.5" fill="#92400e">発注する?</text></g>
+  <g><polygon points="1960,286 2006,314 1960,342 1914,314" fill="#fffbeb" stroke="#d97706" stroke-width="1.6"/><text x="1960" y="311" text-anchor="middle" font-size="8.5" fill="#92400e">再提案でも</text><text x="1960" y="322" text-anchor="middle" font-size="8.5" fill="#92400e">合意しない?</text></g>
+  <g><polygon points="3760,114 3806,142 3760,170 3714,142" fill="#fffbeb" stroke="#d97706" stroke-width="1.6"/><text x="3760" y="139" text-anchor="middle" font-size="8.5" fill="#92400e">システム化</text><text x="3760" y="150" text-anchor="middle" font-size="8.5" fill="#92400e">に進む?</text></g>
+  <g><polygon points="3760,286 3806,314 3760,342 3714,314" fill="#fffbeb" stroke="#d97706" stroke-width="1.6"/><text x="3760" y="311" text-anchor="middle" font-size="8.5" fill="#92400e">再提案でも</text><text x="3760" y="322" text-anchor="middle" font-size="8.5" fill="#92400e">合意しない?</text></g>
+  <g><polygon points="4360,114 4406,142 4360,170 4314,142" fill="#fef2f2" stroke="#dc2626" stroke-width="1.6"/><text x="4360" y="139" text-anchor="middle" font-size="8.5" fill="#b91c1c">実業務で</text><text x="4360" y="150" text-anchor="middle" font-size="8.5" fill="#b91c1c">運用できる?</text></g>
+
+  <g>
+    <rect x="535" y="290" width="150" height="48" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+    <text x="610" y="304" text-anchor="middle" font-size="10.5" fill="#0f172a">ヒアリングし現状業務を</text><text x="610" y="318" text-anchor="middle" font-size="10.5" fill="#0f172a">分析して課題を整理する</text>
+    <rect x="541" y="342" width="138" height="20" rx="6" fill="#ecfdf5" stroke="#059669"/><text x="610" y="356" text-anchor="middle" font-size="9.5" fill="#065f46">📄途中成果物 ・共有</text>
+  </g>
+  <g>
+    <rect x="835" y="290" width="150" height="48" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+    <text x="910" y="304" text-anchor="middle" font-size="10.5" fill="#0f172a">顧客と業務課題の</text><text x="910" y="318" text-anchor="middle" font-size="10.5" fill="#0f172a">共通認識を持ち合意する</text>
+  </g>
+  <g>
+    <rect x="1135" y="290" width="150" height="48" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+    <text x="1210" y="304" text-anchor="middle" font-size="10.5" fill="#0f172a">コンセプトを定義し</text><text x="1210" y="318" text-anchor="middle" font-size="10.5" fill="#0f172a">システム化の対象を決める</text>
+  </g>
+  <g>
+    <rect x="1435" y="290" width="150" height="48" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+    <text x="1510" y="304" text-anchor="middle" font-size="10.5" fill="#0f172a">第1回（要件・課題整理）の</text><text x="1510" y="318" text-anchor="middle" font-size="10.5" fill="#0f172a">見積もりを提示する</text>
+    <rect x="1441" y="342" width="138" height="20" rx="6" fill="#ecfdf5" stroke="#059669"/><text x="1510" y="356" text-anchor="middle" font-size="9.5" fill="#065f46">📄見積書 ・提示</text>
+  </g>
+  <g>
+    <rect x="1735" y="290" width="150" height="48" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+    <text x="1810" y="304" text-anchor="middle" font-size="10.5" fill="#0f172a">機能を縮小し再見積もり</text><text x="1810" y="318" text-anchor="middle" font-size="10.5" fill="#0f172a">して再提案する</text>
+  </g>
+  <g>
+    <rect x="2035" y="290" width="150" height="48" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+    <text x="2110" y="304" text-anchor="middle" font-size="10.5" fill="#0f172a">詳細な現状業務を</text><text x="2110" y="318" text-anchor="middle" font-size="10.5" fill="#0f172a">ヒアリングしフロー化する</text>
+  </g>
+  <g>
+    <rect x="2335" y="290" width="150" height="48" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+    <text x="2410" y="300" text-anchor="middle" font-size="9.5" fill="#0f172a">課題を整理し顧客と認識を</text><text x="2410" y="312" text-anchor="middle" font-size="9.5" fill="#0f172a">合わせシステム化の</text><text x="2410" y="324" text-anchor="middle" font-size="9.5" fill="#0f172a">余地を検討する</text>
+    <rect x="2341" y="342" width="138" height="20" rx="6" fill="#ecfdf5" stroke="#059669"/><text x="2410" y="356" text-anchor="middle" font-size="9.5" fill="#065f46">📄途中成果物 ・共有</text>
+  </g>
+  <g>
+    <rect x="2635" y="290" width="150" height="48" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+    <text x="2710" y="300" text-anchor="middle" font-size="9" fill="#0f172a">業務そのものの改善を検討し、</text><text x="2710" y="312" text-anchor="middle" font-size="9" fill="#0f172a">時には社内風土まで踏み込んで</text><text x="2710" y="324" text-anchor="middle" font-size="9" fill="#0f172a">あるべき姿を顧客とともに描く</text>
+  </g>
+  <g>
+    <rect x="2935" y="290" width="150" height="48" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+    <text x="3010" y="304" text-anchor="middle" font-size="10.5" fill="#0f172a">成果物を提出し</text><text x="3010" y="318" text-anchor="middle" font-size="10.5" fill="#0f172a">顧客と合意する</text>
+    <rect x="2880" y="342" width="260" height="20" rx="6" fill="#ecfdf5" stroke="#059669"/><text x="3010" y="356" text-anchor="middle" font-size="9.5" fill="#065f46">📄現状業務フロー・理想業務フロー・課題マッピング ・提出</text>
+  </g>
+  <g>
+    <rect x="3235" y="290" width="150" height="48" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+    <text x="3310" y="304" text-anchor="middle" font-size="10.5" fill="#0f172a">第2回（システム化）の</text><text x="3310" y="318" text-anchor="middle" font-size="10.5" fill="#0f172a">見積もりを提示する</text>
+    <rect x="3241" y="342" width="138" height="20" rx="6" fill="#ecfdf5" stroke="#059669"/><text x="3310" y="356" text-anchor="middle" font-size="9.5" fill="#065f46">📄見積書 ・提示</text>
+  </g>
+  <g>
+    <rect x="3535" y="290" width="150" height="48" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+    <text x="3610" y="304" text-anchor="middle" font-size="10.5" fill="#0f172a">機能を縮小し再見積もり</text><text x="3610" y="318" text-anchor="middle" font-size="10.5" fill="#0f172a">して再提案する</text>
+  </g>
+  <g>
+    <rect x="3835" y="462" width="150" height="48" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+    <text x="3910" y="472" text-anchor="middle" font-size="9" fill="#0f172a">システム開発を行う（要件整理・</text><text x="3910" y="484" text-anchor="middle" font-size="9" fill="#0f172a">詳細設計・実装・テスト・</text><text x="3910" y="496" text-anchor="middle" font-size="9" fill="#0f172a">ユーザーテスト）</text>
+  </g>
+  <g>
+    <rect x="4435" y="462" width="150" height="48" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.6"/>
+    <text x="4510" y="490" text-anchor="middle" font-size="11" fill="#0f172a">開発完了として納品する</text>
+    <rect x="4441" y="514" width="138" height="19" rx="9" fill="#f5f3ff" stroke="#7c3aed"/><text x="4510" y="528" text-anchor="middle" font-size="9.5" fill="#6b21a8">★ 納品</text>
+  </g>
+</svg>
+
+  </div>
+
+  <div class="card">
+    <h2>凡例</h2>
+    
+    <div class="legend"><div class="lg"><span class="sw" style="background:#e2e8f0;border:1.6px solid #475569;border-radius:9px"></span>開始</div>
+      <div class="lg"><span class="sw" style="background:#dcfce7;border:1.6px solid #16a34a;border-radius:9px"></span>終了</div>
+      <div class="lg"><span class="sw" style="background:#fef2f2;border:1.6px solid #dc2626;border-radius:9px"></span>終了（見送り）</div>
+      <div class="lg"><span class="sw" style="background:#eff6ff;border:1.6px solid #2563eb"></span>業務行為</div>
+      <div class="lg"><span class="sw" style="background:#fffbeb;border:1.6px solid #d97706;transform:rotate(45deg);width:14px;height:14px"></span>条件で分かれる</div>
+      <div class="lg"><span class="sw" style="background:#fef2f2;border:1.6px solid #dc2626;transform:rotate(45deg);width:14px;height:14px"></span>異常時に分かれる</div>
+      <div class="lg"><span class="sw" style="background:#ecfdf5;border:1px solid #059669"></span>成果物・操作内容</div>
+      <div class="lg"><span class="sw" style="background:#fff7ed;border:1px solid #ea580c"></span>⏳ 待ち・滞留</div>
+      <div class="lg"><span class="sw" style="background:repeating-linear-gradient(90deg,#dc2626 0 6px,#fff 6px 11px)"></span>前の工程へ戻る</div>
+      <div class="lg"><span class="sw" style="background:#7c3aed"></span>★ 節目（マイルストーン）</div>
+</div>
+  </div>
+
+
+  <div class="card" style="border-color:#bae6fd;background:#f0f9ff">
+    <h2>生成時の注記</h2>
+    <ul style="margin:0;padding-left:20px;font-size:12.5px;line-height:1.75;color:#0c4a6e">
+      <li><b>省略はありません。</b> 記法（.flow）に書かれた項目はすべて図に出しています。文字を途中で切ってもいません。</li>
+      <li><b>空欄の項目があります。</b> 所要時間・頻度・課題・改善案・手段は、ヒアリングで「まちまち」「特になし」との回答だったか、そもそも伺えていないため、<b>推測で埋めずに空欄</b>にしています。詳細は「ヒアリング時の会話」の末尾を参照。</li>
+      <li><b>戻りの線について（記法の制約）：</b> 「見積もりへ戻る」「開発へ戻る」は、条件分岐の枝が前の工程に向かうものです。記法には枝が戻りであることを示す書き方が無いため、<b>読み手が誤解しないよう手戻りと同じ赤い破線で描いています</b>（レンダラの判断）。</li>
+      <li><b>成果物合意の成果物は3つ</b>（現状業務フロー／理想業務フロー／課題マッピング）ですが、記法は1ステップに成果物を1つしか書けないため、3つを1行に併記しています。</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h2>記法ソース（.flow）</h2>
+    <pre># flow-notation v0.3 — システム開発：開発依頼 → 納品 (AS-IS)
+# 出典: ヒアリング時の会話.md（システム開発会社側の担当者へのヒアリング）
+# 会話に出ていない数値・課題・改善案・手段は書いていない。空欄にした項目は会話記録の末尾を参照。
+roles:      [顧客#社外, 上流工程担当, 開発担当]
+timeline:   [相談, 現状分析, 課題合意, 対象決定, 第1回見積, 第1回発注, 詳細ヒアリング, 課題整理,
+             業務改善検討, 成果物合意, 第2回見積, 第2回発注, システム開発, 検収, 納品]
+milestones: { 第1回発注: 第1回発注, 第2回発注: 第2回発注, 納品: 納品 }
+view:       AS-IS
+
+steps:
+  - start: 顧客からの開発依頼
+    at: [顧客#社外, 相談]
+    trigger: デジタル化・システム化の相談を受ける
+
+  # ---- 第1回発注に向けた提案 ----
+  - id: n1
+    at: [上流工程担当, 現状分析]
+    from: 顧客からの開発依頼
+    act: ヒアリングし現状業務を分析して課題を整理する
+    artifact: 途中成果物
+    op: 共有
+
+  - id: n2
+    at: [上流工程担当, 課題合意]
+    from: n1
+    act: 顧客と業務課題の共通認識を持ち合意する
+
+  - id: n3
+    at: [上流工程担当, 対象決定]
+    from: n2
+    act: コンセプトを定義しシステム化の対象を決める
+
+  - id: n4
+    at: [上流工程担当, 第1回見積]
+    from: n3
+    act: 第1回（要件・課題整理）の見積もりを提示する
+    artifact: 見積書
+    op: 提示
+
+  - id: n5
+    at: [顧客#社外, 第1回発注]
+    from: n4
+    act: 第1回を発注するか判断する
+    wait: 顧客の判断待ち
+
+  - id: c1
+    cond: 第1回を発注する?
+    from: n5
+    then: n6
+    else: rp1
+
+  - id: rp1
+    at: [上流工程担当, 第1回発注]
+    from: c1
+    act: 機能を縮小し再見積もりして再提案する
+
+  - id: c1b
+    cond: 再提案でも合意しない?
+    from: rp1
+    then: 終了（第1回見送り）
+    else: n4
+
+  # end/start には id が無いため、参照はラベルで行う。ラベルは一意にする必要がある
+  - end: 終了（第1回見送り）
+    at: [顧客#社外, 詳細ヒアリング]
+    from: c1b
+    view: 例外終了
+
+  # ---- 第1回（要件・課題整理） ----
+  - id: n6
+    at: [上流工程担当, 詳細ヒアリング]
+    from: c1
+    act: 詳細な現状業務をヒアリングしフロー化する
+
+  - id: n7
+    at: [上流工程担当, 課題整理]
+    from: n6
+    act: 課題を整理し顧客と認識を合わせシステム化の余地を検討する
+    artifact: 途中成果物
+    op: 共有
+
+  - id: n8
+    at: [上流工程担当, 業務改善検討]
+    from: n7
+    act: 業務そのものの改善を検討し、時には社内風土まで踏み込んであるべき姿を顧客とともに描く
+
+  - id: n9
+    at: [上流工程担当, 成果物合意]
+    from: n8
+    act: 成果物を提出し顧客と合意する
+    artifact: 現状業務フロー・理想業務フロー・課題マッピング
+    op: 提出
+
+  - id: n10
+    at: [上流工程担当, 第2回見積]
+    from: n9
+    act: 第2回（システム化）の見積もりを提示する
+    artifact: 見積書
+    op: 提示
+
+  - id: n11
+    at: [顧客#社外, 第2回発注]
+    from: n10
+    act: システム化に進むか判断する
+    wait: 顧客の判断待ち
+
+  - id: c2
+    cond: システム化に進む?
+    from: n11
+    then: n12
+    else: rp2
+
+  - id: rp2
+    at: [上流工程担当, 第2回発注]
+    from: c2
+    act: 機能を縮小し再見積もりして再提案する
+
+  - id: c2b
+    cond: 再提案でも合意しない?
+    from: rp2
+    then: 終了（第2回見送り）
+    else: n10
+
+  - end: 終了（第2回見送り）
+    at: [顧客#社外, システム開発]
+    from: c2b
+    view: 例外終了
+
+  # ---- 第2回（システム開発） ----
+  - id: n12
+    at: [開発担当, システム開発]
+    from: c2
+    act: システム開発を行う（要件整理・詳細設計・実装・テスト・ユーザーテスト）
+
+  - id: n13
+    at: [顧客#社外, 検収]
+    from: n12
+    act: 実業務で運用できるか判断する
+    wait: 顧客の判断待ち
+
+  - except: 実業務で運用できる?
+    from: n13
+    ok: n14
+    ng: n12
+
+  - id: n14
+    at: [開発担当, 納品]
+    from: n13
+    act: 開発完了として納品する
+    milestone: 納品
+
+  - end: 納品完了
+    at: [顧客#社外, 納品]
+    from: n14
+</pre>
+  </div>
+</div>
+
+<div id="tip"></div>
+<script>
+(function(){
+  var tip=document.getElementById('tip');
+  function show(e){
+    var el=e.target.closest('.term'); if(!el) return;
+    tip.innerHTML='<b>'+el.getAttribute('data-term')+'</b>'+el.getAttribute('data-desc');
+    tip.style.opacity=1; move(e);
+  }
+  function move(e){
+    var pad=14, w=tip.offsetWidth, h=tip.offsetHeight;
+    var x=e.clientX+pad, y=e.clientY+pad;
+    if(x+w>innerWidth-8)  x=e.clientX-w-pad;
+    if(y+h>innerHeight-8) y=e.clientY-h-pad;
+    tip.style.left=x+'px'; tip.style.top=y+'px';
+  }
+  function hide(){ tip.style.opacity=0; }
+  document.addEventListener('mouseover',show);
+  document.addEventListener('mousemove',function(e){ if(tip.style.opacity==1) move(e); });
+  document.addEventListener('mouseout',function(e){ if(e.target.closest('.term')) hide(); });
+})();
+</script>
