@@ -34,9 +34,16 @@
     padding:2px 9px;border-radius:99px;margin-bottom:8px}
   .sc h3{font-size:19px;margin:0 0 6px}
   .lead{color:#475569;font-size:14px;margin:0;max-width:44em}
-  .meta{margin:0;font-size:12.5px;min-width:210px}
+  .side{display:flex;flex-direction:column;align-items:flex-start;min-width:210px}
+  .meta{margin:0;font-size:12.5px}
   .meta dt{color:var(--muted);font-size:11.5px;margin-top:6px}
   .meta dd{margin:0 0 4px} .meta .sub{color:var(--muted);font-size:11.5px}
+  .btn-open{display:inline-flex;align-items:center;gap:6px;margin-top:14px;align-self:flex-start;padding:8px 14px;
+    border-radius:8px;background:#2563eb;color:#fff;text-decoration:none;font-size:13px;font-weight:700;
+    border:1px solid #2563eb;white-space:nowrap}
+  .btn-open:hover{background:#1d4ed8}
+  .btn-open.ghost{background:#fff;color:var(--blue)}
+  .btn-open.ghost:hover{background:#eff6ff}
   .tags{display:flex;gap:6px;flex-wrap:wrap;margin:16px 0 18px}
   .tag{font-size:11.5px;padding:3px 9px;border-radius:99px;background:#f0f9ff;color:#0e7490;border:1px solid #bae6fd}
   .tabs{display:flex;gap:4px;border-bottom:2px solid var(--line);margin-bottom:18px;flex-wrap:wrap}
@@ -121,10 +128,13 @@
       <h3>自動車部品工場：受注 → 出荷</h3>
       <p class="lead">EDI で受注し、生産計画・部品調達・製造・検査を経て出荷するまで。記法の語彙をひととおり含む実寸大の例。</p>
     </div>
+    <div class="side">
     <dl class="meta">
       <dt>出典</dt><dd><b>ヒアリング（シミュレーション）</b><br><span class="sub">工場職員（製造課）＋エンジニア（生産技術）</span></dd>
       <dt>規模</dt><dd>8役割 × 8列 / 16ステップ</dd>
     </dl>
+      <a class="btn-open" href="examples/01-auto-parts-factory/order-to-shipment.html" target="_blank" rel="noopener">業務フロー図を別タブで開く ↗</a>
+    </div>
   </div>
   <div class="tags"><span class="tag">並行と合流</span><span class="tag">期限（SLA）</span><span class="tag">社外システム連携</span><span class="tag">用語補足</span><span class="tag">手戻り</span><span class="tag">課題と改善案</span></div>
 
@@ -399,7 +409,7 @@ steps:
   <section class="pane" id="s1-c">
     <p class="note">上の <code>.flow</code> から AI が描いた図です（2560 × 1470）。<b>枠の中を横スクロール</b>できます。用語に点線が付いた語はマウスを乗せると説明が出ます。</p>
     <div class="frame"><iframe src="examples/01-auto-parts-factory/order-to-shipment.html" loading="lazy" title="自動車部品工場：受注 → 出荷"></iframe></div>
-    <p class="more"><a href="examples/01-auto-parts-factory/order-to-shipment.html" target="_blank" rel="noopener">別タブで大きく見る →</a></p>
+    <p class="more"><a class="btn-open ghost" href="examples/01-auto-parts-factory/order-to-shipment.html" target="_blank" rel="noopener">別タブで大きく見る ↗</a></p>
   </section>
 </article>
 <article class="sc" id="s2">
@@ -409,10 +419,13 @@ steps:
       <h3>システム開発：開発依頼 → 納品</h3>
       <p class="lead">顧客の相談から、要件・課題整理（第1回）とシステム開発（第2回）の 2 段階発注を経て納品するまで。分岐と戻りが多い。</p>
     </div>
+    <div class="side">
     <dl class="meta">
       <dt>出典</dt><dd><b>実際のヒアリング</b><br><span class="sub">システム開発会社の担当者（実在の業務）</span></dd>
       <dt>規模</dt><dd>3役割 × 15列 / 25ステップ</dd>
     </dl>
+      <a class="btn-open" href="examples/02-system-development/development-flow.html" target="_blank" rel="noopener">業務フロー図を別タブで開く ↗</a>
+    </div>
   </div>
   <div class="tags"><span class="tag">2段階発注</span><span class="tag">条件分岐</span><span class="tag">前の工程へ戻る</span><span class="tag">注釈（note）</span><span class="tag">成果物の複数指定</span><span class="tag">マイルストーン</span></div>
 
@@ -644,7 +657,7 @@ steps:
   <section class="pane" id="s2-c">
     <p class="note">上の <code>.flow</code> から AI が描いた図です（4660 × 620）。<b>枠の中を横スクロール</b>できます。用語に点線が付いた語はマウスを乗せると説明が出ます。</p>
     <div class="frame"><iframe src="examples/02-system-development/development-flow.html" loading="lazy" title="システム開発：開発依頼 → 納品"></iframe></div>
-    <p class="more"><a href="examples/02-system-development/development-flow.html" target="_blank" rel="noopener">別タブで大きく見る →</a></p>
+    <p class="more"><a class="btn-open ghost" href="examples/02-system-development/development-flow.html" target="_blank" rel="noopener">別タブで大きく見る ↗</a></p>
   </section>
 </article>
   </div>
