@@ -1,0 +1,568 @@
+<title>business-flow-visualizer — デモ</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="業務ヒアリングの結果から、AIに業務フロー図を書いてもらう。ヒアリング → .flow → 図 の流れを実例で確認できるデモサイト。">
+<style>
+  :root{--bg:#f8fafc;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--blue:#2563eb;--acc:#0891b2}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);line-height:1.8;
+    font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",system-ui,sans-serif}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  header{background:#0f172a;color:#e2e8f0;padding:56px 0 48px}
+  header h1{font-size:30px;margin:0 0 6px;letter-spacing:.01em}
+  header .tagline{color:#94a3b8;font-size:14px;margin:0 0 22px}
+  header p.big{font-size:17px;margin:0 0 26px;max-width:46em;color:#f1f5f9}
+  .btns{display:flex;gap:10px;flex-wrap:wrap}
+  .btn{display:inline-block;padding:9px 16px;border-radius:8px;font-size:13.5px;text-decoration:none;
+    background:#1e293b;color:#e2e8f0;border:1px solid #334155}
+  .btn.pri{background:#2563eb;border-color:#2563eb;color:#fff}
+  h2{font-size:20px;margin:0 0 6px}
+  .sec{padding:48px 0;border-bottom:1px solid var(--line)}
+  .sec > .wrap > p.sub{color:var(--muted);font-size:14px;margin:0 0 24px}
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:820px){.steps{grid-template-columns:1fr}}
+  .step{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .step .n{display:inline-flex;width:24px;height:24px;align-items:center;justify-content:center;
+    border-radius:6px;background:#eff6ff;color:var(--blue);font-size:12.5px;font-weight:700;margin-bottom:8px}
+  .step h3{font-size:15px;margin:0 0 6px}
+  .step p{font-size:13.5px;color:#475569;margin:0}
+  .step .who{display:inline-block;margin-top:10px;font-size:11.5px;padding:3px 8px;border-radius:99px;
+    background:#f1f5f9;color:#475569;border:1px solid #e2e8f0}
+  .sc{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px;margin-bottom:26px;
+    box-shadow:0 1px 3px rgba(15,23,42,.05)}
+  .sc-head{display:flex;gap:24px;justify-content:space-between;flex-wrap:wrap}
+  .no{display:inline-block;font-size:11.5px;font-weight:700;color:#fff;background:var(--acc);
+    padding:2px 9px;border-radius:99px;margin-bottom:8px}
+  .sc h3{font-size:19px;margin:0 0 6px}
+  .lead{color:#475569;font-size:14px;margin:0;max-width:44em}
+  .meta{margin:0;font-size:12.5px;min-width:210px}
+  .meta dt{color:var(--muted);font-size:11.5px;margin-top:6px}
+  .meta dd{margin:0 0 4px}
+  .meta .sub{color:var(--muted);font-size:11.5px}
+  .tags{display:flex;gap:6px;flex-wrap:wrap;margin:16px 0 18px}
+  .tag{font-size:11.5px;padding:3px 9px;border-radius:99px;background:#f0f9ff;color:#0e7490;border:1px solid #bae6fd}
+  .tabs{display:flex;gap:4px;border-bottom:2px solid var(--line);margin-bottom:18px;flex-wrap:wrap}
+  .tab{appearance:none;border:0;background:none;font:inherit;font-size:13.5px;padding:9px 14px;
+    color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px}
+  .tab.is-on{color:var(--blue);border-bottom-color:var(--blue);font-weight:700}
+  .pane{display:none} .pane.is-on{display:block}
+  .note{font-size:13.5px;color:#475569;margin:0 0 14px}
+  .qa{background:#f8fafc;border:1px solid var(--line);border-left:3px solid var(--acc);
+    border-radius:8px;padding:14px 18px;font-size:14px}
+  .qa p{margin:.2em 0} .qa ul{margin:.3em 0;padding-left:1.3em} .qa li{margin:.15em 0}
+  .qa br{display:block;content:"";height:.4em}
+  pre{margin:0;background:#0f172a;color:#e2e8f0;border-radius:10px;padding:16px;overflow:auto;
+    max-height:440px;font-size:12px;line-height:1.65;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  .frame{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+  iframe{width:100%;height:620px;border:0;display:block}
+  .more{margin:12px 0 0;font-size:13px}
+  .more a,.qa a{color:var(--blue)}
+  .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:820px){.cols{grid-template-columns:1fr}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .card h3{font-size:14.5px;margin:0 0 6px}
+  .card code{font-size:12px}
+  .card p{font-size:13.5px;color:#475569;margin:0}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;background:#fff}
+  th,td{border:1px solid var(--line);padding:8px 12px;text-align:left}
+  th{background:#f1f5f9;font-weight:700}
+  code{background:#f1f5f9;padding:1px 5px;border-radius:4px;font-size:12.5px;
+    font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+  footer{padding:36px 0 60px;color:var(--muted);font-size:13px}
+  footer a{color:var(--blue)}
+</style>
+
+<header>
+  <div class="wrap">
+    <h1>business-flow-visualizer</h1>
+    <p class="tagline">flow-notation v0.4 ／ Claude Code・Codex CLI 対応スキル</p>
+    <p class="big">業務ヒアリングの結果から、<b>AI に業務フロー図を書いてもらう</b>ための記法とスキルです。
+      Excel や draw.io で図形を並べる作業をやめて、聞き出すことに集中できます。</p>
+    <div class="btns">
+      <a class="btn pri" href="#scenarios">実例を見る</a>
+      <a class="btn" href="https://github.com/Cyberdog-AI-Lab/business-flow-visualizer">GitHub</a>
+      <a class="btn" href="docs/SPEC.md">記法仕様</a>
+    </div>
+  </div>
+</header>
+
+<section class="sec">
+  <div class="wrap">
+    <h2>3 ステップ</h2>
+    <p class="sub">人間は「聞き出すこと」に集中し、見せるのは AI に任せる、という役割分担です。</p>
+    <div class="steps">
+      <div class="step"><span class="n">1</span><h3>ヒアリングする</h3>
+        <p>エンジニアと AI が一緒に業務担当者へ聞きます。AI は質問の型（全体像→役割→時系列→詳細→用語→分岐）を持ち、聞き漏れを止めます。</p>
+        <span class="who">エンジニア × AI</span></div>
+      <div class="step"><span class="n">2</span><h3>.flow に落とす</h3>
+        <p>聞いた内容を YAML で書きます。<b>聞いていないことは書きません。</b>答えが得られなかった項目は空欄のままにします。</p>
+        <span class="who">AI（人が確認）</span></div>
+      <div class="step"><span class="n">3</span><h3>図にする</h3>
+        <p>役割 × 時系列のスイムレーン HTML を AI が描きます。パーサもレンダラも書かず、仕様書を読んで AI が組み立てます。</p>
+        <span class="who">AI</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="sec" id="scenarios">
+  <div class="wrap">
+    <h2>実例</h2>
+    <p class="sub">シナリオごとに <b>①ヒアリング → ②.flow → ③業務フロー図</b> を切り替えて確認できます。</p>
+    
+<article class="sc" id="s1">
+  <div class="sc-head">
+    <div>
+      <span class="no">01</span>
+      <h3>自動車部品工場：受注 → 出荷</h3>
+      <p class="lead">EDI で受注し、生産計画・部品調達・製造・検査を経て出荷するまで。記法の語彙をひととおり含む実寸大の例。</p>
+    </div>
+    <dl class="meta">
+      <dt>出典</dt><dd><b>ヒアリング（シミュレーション）</b><br><span class="sub">工場職員（製造課）＋エンジニア（生産技術）</span></dd>
+      <dt>規模</dt><dd>8役割 × 8列 / 16ステップ</dd>
+    </dl>
+  </div>
+  <div class="tags"><span class="tag">並行と合流</span><span class="tag">期限（SLA）</span><span class="tag">社外システム連携</span><span class="tag">用語補足</span><span class="tag">手戻り</span><span class="tag">課題と改善案</span></div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab is-on" data-t="s1-a" role="tab">① ヒアリング</button>
+    <button class="tab" data-t="s1-b" role="tab">② .flow（記法テキスト）</button>
+    <button class="tab" data-t="s1-c" role="tab">③ 業務フロー図</button>
+  </div>
+
+  <section class="pane is-on" id="s1-a">
+    <p class="note">エンジニアと AI が一緒に聞き取ります。以下は実際のやり取りからの抜粋です。</p>
+    <div class="qa"><p><strong>Q：</strong> Day0の受注取り込みから。誰が何をして、それはシステムですか手作業ですか？</p>
+<br>
+<p><strong>A（佐藤）：</strong> EDIで受注管理システムに自動で入ります。</p>
+<p>ただ<strong>内示（フォーキャスト）と確定数の突合は手作業</strong>。担当が毎朝30分くらいExcelで見比べてます。</p></div>
+    <p class="note">この 1 往復から、誰が・何を・手段・成果物・所要時間・頻度・困りごと の 7 項目が埋まります。</p>
+    <p class="more"><a href="examples/01-auto-parts-factory/ヒアリング時の会話.md">ヒアリング全文を見る →</a></p>
+  </section>
+
+  <section class="pane" id="s1-b">
+    <p class="note">聞いた内容をそのまま YAML で書きます。<code>at:</code> が「誰の行 × いつの列」を指し、そこが図の座標になります。</p>
+    <pre><code># flow-notation v0.4 — 自動車部品工場：受注→出荷 (AS-IS)
+# 出典: ヒアリング時の会話.md（工場職員＋エンジニア）
+# 会話に出ていない数値・課題・改善案は書いていない。空欄にした項目は会話記録の末尾を参照。
+roles:      [自動車メーカー#社外, 受注管理課, 生産管理課, 調達課, 部品サプライヤー#外部, 製造課, 品質保証課, 出荷課]
+# 同じ日に複数の行為が起きるため、SPEC 2.2 に従い Day0 と Day1 の粒度を割っている
+timeline:   [Day0午前, Day0午後, Day1午前, Day1午後, Day2, Day3, Day4, Day5]
+milestones: { 生産計画確定: Day1午前, 製造完了: Day3, 出荷完了: Day5 }
+sla:
+  受注〜出荷リードタイム: { span: [Day0午前, Day5], limit: 5営業日 }
+  部品納入:               { span: [Day1午後, Day2], limit: 1営業日 }
+view:       AS-IS
+
+# 業務を知らない人向けの用語補足。本文中の [[用語]] がツールチップになる
+glossary:
+  EDI:      電子データ交換。企業間でデータを決まった形式でやり取りする仕組み
+  内示:     確定前にメーカーから示される見込みの注文数量。確定注文とは数量が変わることがある
+  MRP:      { desc: 資材所要量計画。計画から必要な部品と数量・時期を割り出すもの, aka: [生産管理システム] }
+  MES:      { desc: 製造実行システム。設備や作業者から実績をその場で集めるもの, aka: [製造実行システム] }
+  治具:     加工や組立のときに部品を正しい位置で固定する道具
+  段取り替え: 生産する品種を切り替えるために治具や設定を入れ替える作業
+  受入検収: 納入された部品を検査して、数量と品質を確認して受け入れる手続き
+  検査成績書: 検査の結果を記録した書類。出荷する製品の品質を証明する
+  ASN:      事前出荷通知。何をいつ送るかを出荷前に知らせるデータ
+
+steps:
+  - start: 確定注文の受信
+    at: [自動車メーカー#社外, Day0午前]
+    trigger: 毎朝 EDI 自動受信
+
+  - id: r1
+    at: [受注管理課, Day0午前]
+    from: 確定注文の受信
+    act: 受注データを取り込み内容を確認する
+    by: 外部/[[EDI]]
+    artifact: 受注管理システム
+    op: 受注登録
+    time: 30分
+    freq: 毎日
+    issue: &quot;[[内示]]と確定数の突合を Excel で手作業している&quot;
+
+  - id: c1
+    cond: &quot;[[内示]]との差異が ±10% 超?&quot;
+    from: r1
+    then: r2
+    else: p1
+
+  - id: r2
+    at: [受注管理課, Day0午後]
+    from: c1
+    act: メーカー担当に数量差異を照会する
+    by: 人手/電話・メール
+    wait: 回答待ち 半日〜1日
+    rework: r1
+    issue: 回答が遅いと計画着手が翌日にずれる
+
+  - id: p1
+    at: [生産管理課, Day1午前]
+    from: c1
+    act: 生産計画を立案・確定する
+    by: システム/生産管理システム([[MRP]])
+    artifact: 生産計画
+    op: 計画確定
+    milestone: 生産計画確定
+
+  # 計画確定後、部品発注と製造準備が並行で走る
+  - par: par1
+    from: p1
+    to: [b1, m0]
+
+  - id: b1
+    at: [調達課, Day1午後]
+    from: par1
+    act: 不足部品を発注する
+    by: 外部/[[EDI]]発注
+    artifact: 発注データ
+    op: 発注送信
+
+  - id: s1
+    at: [部品サプライヤー#外部, Day2]
+    from: b1
+    act: 部品を納入する
+    by: 外部/納品・[[受入検収]]
+    artifact: 納品書
+    op: 受入計上
+    wait: 部品入荷待ち
+    on_overdue: -&gt; 調達課より納期督促
+
+  - id: m0
+    at: [製造課, Day2]
+    from: par1
+    act: &quot;[[治具]]・[[段取り替え]]を準備する&quot;
+    by: 人手/段取り替え
+    time: 半日
+
+  # 部品入荷と段取り完了の両方がそろって製造着手
+  - id: m1
+    at: [製造課, Day3]
+    from: [s1, m0]
+    join: all
+    act: 加工・組立を行う
+    by: 人手/製造ライン
+    artifact: 製造指示書（紙）
+    op: 実績を手書き記入
+    time: 1日
+    issue: 日報が紙。翌朝まとめて入力で、実績がリアルタイムに見えない
+    tobe: &quot;[[MES]] で設備から実績を自動収集&quot;
+    milestone: 製造完了
+
+  - id: q1
+    at: [品質保証課, Day4]
+    from: m1
+    act: 出荷検査を行う
+    by: 人手/[[治具]]に当てて測定
+    artifact: &quot;[[検査成績書]]&quot;
+    op: 検査システムで作成
+    wait: 検査待ち 半日
+
+  - except: 検査NG?
+    from: q1
+    ng: m2
+    ok: h1
+
+  - id: m2
+    at: [製造課, Day4]
+    from: q1
+    act: 手直しし再検査に回す
+    by: 人手/ライン外作業
+    rework: q1
+    issue: 手直しの記録が紙で後追いが大変
+
+  - id: h1
+    at: [出荷課, Day5]
+    from: q1
+    act: 梱包・ラベル貼りをして納品書を発行する
+    by: 人手/梱包
+    artifact: 納品書
+    op: 発行
+
+  - id: h2
+    at: [出荷課, Day5, 2]
+    from: h1
+    act: &quot;[[ASN]] を送信し製品を出荷する&quot;
+    by: 外部/[[EDI]]
+    artifact: ASN
+    op: 送信
+    milestone: 出荷完了
+
+  - end: 納入（メーカー受領）
+    at: [自動車メーカー#社外, Day5]
+    from: h2
+</code></pre>
+    <p class="more"><a href="examples/01-auto-parts-factory/order-to-shipment.flow">order-to-shipment.flow を開く →</a></p>
+  </section>
+
+  <section class="pane" id="s1-c">
+    <p class="note">上の <code>.flow</code> から AI が描いた図です（2560 × 1470）。<b>枠の中を横スクロール</b>できます。用語に点線が付いた語はマウスを乗せると説明が出ます。</p>
+    <div class="frame"><iframe src="examples/01-auto-parts-factory/order-to-shipment.html" loading="lazy" title="自動車部品工場：受注 → 出荷"></iframe></div>
+    <p class="more"><a href="examples/01-auto-parts-factory/order-to-shipment.html" target="_blank" rel="noopener">別タブで大きく見る →</a></p>
+  </section>
+</article>
+<article class="sc" id="s2">
+  <div class="sc-head">
+    <div>
+      <span class="no">02</span>
+      <h3>システム開発：開発依頼 → 納品</h3>
+      <p class="lead">顧客の相談から、要件・課題整理（第1回）とシステム開発（第2回）の 2 段階発注を経て納品するまで。分岐と戻りが多い。</p>
+    </div>
+    <dl class="meta">
+      <dt>出典</dt><dd><b>実際のヒアリング</b><br><span class="sub">システム開発会社の担当者（実在の業務）</span></dd>
+      <dt>規模</dt><dd>3役割 × 15列 / 25ステップ</dd>
+    </dl>
+  </div>
+  <div class="tags"><span class="tag">2段階発注</span><span class="tag">条件分岐</span><span class="tag">前の工程へ戻る</span><span class="tag">注釈（note）</span><span class="tag">成果物の複数指定</span><span class="tag">マイルストーン</span></div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab is-on" data-t="s2-a" role="tab">① ヒアリング</button>
+    <button class="tab" data-t="s2-b" role="tab">② .flow（記法テキスト）</button>
+    <button class="tab" data-t="s2-c" role="tab">③ 業務フロー図</button>
+  </div>
+
+  <section class="pane is-on" id="s2-a">
+    <p class="note">エンジニアと AI が一緒に聞き取ります。以下は実際のやり取りからの抜粋です。</p>
+    <div class="qa"><p><strong>Q：</strong> 再提案のループはどこに付きますか。成果物の呼び方は。期間は分かりますか。</p>
+<p>顧客の判断待ちは発生しますか。課題（⚠）は付けますか。</p>
+<br>
+<p><strong>A：</strong></p>
+<ul><li>基本的には、<strong>NO を言われた際の見積もりに戻ります</strong></li>
+<li><strong>見積もりは「見積書」</strong>でいいです。<strong>10 の成果物もそれでいい</strong>です</li>
+</ul><p>（現状業務フロー／理想業務フロー／課題マッピング）</p>
+<ul><li><strong>2、8 の段階でも途中、成果物は共有します。ただし、納品という形ではありません</strong></li>
+<li><strong>各フェーズの期間は、場合によってまちまち</strong>なので、一回視覚化できてからちょっと考える</li>
+<li><strong>顧客の判断待ちは、もちろん発生します</strong></li>
+<li><strong>特に課題はなし</strong>でいいです</li></ul></div>
+    <p class="note">「まちまち」「特になし」という答えは、推測で埋めず<strong>空欄のまま</strong>にしています。</p>
+    <p class="more"><a href="examples/02-system-development/ヒアリング時の会話.md">ヒアリング全文を見る →</a></p>
+  </section>
+
+  <section class="pane" id="s2-b">
+    <p class="note">聞いた内容をそのまま YAML で書きます。<code>at:</code> が「誰の行 × いつの列」を指し、そこが図の座標になります。</p>
+    <pre><code># flow-notation v0.4 — システム開発：開発依頼 → 納品 (AS-IS)
+# 出典: ヒアリング時の会話.md（システム開発会社側の担当者へのヒアリング）
+# 会話に出ていない数値・課題・改善案・手段は書いていない。空欄にした項目は会話記録の末尾を参照。
+roles:      [顧客#社外, 上流工程担当, 開発担当]
+timeline:   [相談, 現状分析, 課題合意, 対象決定, 第1回見積, 第1回発注, 詳細ヒアリング, 課題整理,
+             業務改善検討, 成果物合意, 第2回見積, 第2回発注, システム開発, 検収, 納品]
+milestones: { 第1回発注: 第1回発注, 第2回発注: 第2回発注, 納品: 納品 }
+view:       AS-IS
+
+# 図全体への補足（事実の注釈。課題ではない）
+notes:
+  - システム開発までに2段階の発注を行っている。第1回は要件と課題の整理、第2回は機能の開発。
+  - 発注の判断でNOになった場合は、機能を縮小し再見積もりして再提案するのが基本。それでも合意しなければ終了する。
+
+steps:
+  - start: 顧客からの開発依頼
+    at: [顧客#社外, 相談]
+    trigger: デジタル化・システム化の相談を受ける
+
+  # ---- 第1回発注に向けた提案 ----
+  - id: n1
+    at: [上流工程担当, 現状分析]
+    from: 顧客からの開発依頼
+    act: ヒアリングし現状業務を分析して課題を整理する
+    artifact: 途中成果物
+    op: 共有
+
+  - id: n2
+    at: [上流工程担当, 課題合意]
+    from: n1
+    act: 顧客と業務課題の共通認識を持ち合意する
+
+  - id: n3
+    at: [上流工程担当, 対象決定]
+    from: n2
+    act: コンセプトを定義しシステム化の対象を決める
+
+  - id: n4
+    at: [上流工程担当, 第1回見積]
+    from: n3
+    act: 第1回（要件・課題整理）の見積もりを提示する
+    artifact: 見積書
+    op: 提示
+
+  - id: n5
+    at: [顧客#社外, 第1回発注]
+    from: n4
+    act: 第1回を発注するか判断する
+    wait: 顧客の判断待ち
+    note: この時点では、システム開発まで行うかを判断する必要はない
+
+  - id: c1
+    cond: 第1回を発注する?
+    from: n5
+    then: n6
+    else: rp1
+
+  - id: rp1
+    at: [上流工程担当, 第1回発注]
+    from: c1
+    act: 機能を縮小し再見積もりして再提案する
+
+  - id: c1b
+    cond: 再提案でも合意しない?
+    from: rp1
+    then: e1
+    else: n4
+    back: [else]      # else は見積もりへ戻る
+
+  - id: e1
+    end: 終了（見送り）
+    at: [顧客#社外, 詳細ヒアリング]
+    from: c1b
+    view: 例外終了
+
+  # ---- 第1回（要件・課題整理） ----
+  - id: n6
+    at: [上流工程担当, 詳細ヒアリング]
+    from: c1
+    act: 詳細な現状業務をヒアリングしフロー化する
+
+  - id: n7
+    at: [上流工程担当, 課題整理]
+    from: n6
+    act: 課題を整理し顧客と認識を合わせシステム化の余地を検討する
+    artifact: 途中成果物
+    op: 共有
+
+  - id: n8
+    at: [上流工程担当, 業務改善検討]
+    from: n7
+    act: 業務そのものの改善を検討し、時には社内風土まで踏み込んであるべき姿を顧客とともに描く
+
+  - id: n9
+    at: [上流工程担当, 成果物合意]
+    from: n8
+    act: 成果物を提出し顧客と合意する
+    artifact: [現状業務フロー, 理想業務フロー, 課題マッピング]
+    op: 提出
+
+  - id: n10
+    at: [上流工程担当, 第2回見積]
+    from: n9
+    act: 第2回（システム化）の見積もりを提示する
+    artifact: 見積書
+    op: 提示
+
+  - id: n11
+    at: [顧客#社外, 第2回発注]
+    from: n10
+    act: システム化に進むか判断する
+    wait: 顧客の判断待ち
+
+  - id: c2
+    cond: システム化に進む?
+    from: n11
+    then: n12
+    else: rp2
+
+  - id: rp2
+    at: [上流工程担当, 第2回発注]
+    from: c2
+    act: 機能を縮小し再見積もりして再提案する
+
+  - id: c2b
+    cond: 再提案でも合意しない?
+    from: rp2
+    then: e2
+    else: n10
+    back: [else]      # else は見積もりへ戻る
+
+  - id: e2
+    end: 終了（見送り）
+    at: [顧客#社外, システム開発]
+    from: c2b
+    view: 例外終了
+
+  # ---- 第2回（システム開発） ----
+  - id: n12
+    at: [開発担当, システム開発]
+    from: c2
+    act: システム開発を行う（要件整理・詳細設計・実装・テスト・ユーザーテスト）
+
+  - id: n13
+    at: [顧客#社外, 検収]
+    from: n12
+    act: 実業務で運用できるか判断する
+    wait: 顧客の判断待ち
+
+  - except: 実業務で運用できる?
+    from: n13
+    ok: n14
+    ng: n12           # 開発へ戻ってやり直し
+    back: [ng]
+
+  - id: n14
+    at: [開発担当, 納品]
+    from: n13
+    act: 開発完了として納品する
+    milestone: 納品
+
+  - end: 納品完了
+    at: [顧客#社外, 納品]
+    from: n14
+</code></pre>
+    <p class="more"><a href="examples/02-system-development/development-flow.flow">development-flow.flow を開く →</a></p>
+  </section>
+
+  <section class="pane" id="s2-c">
+    <p class="note">上の <code>.flow</code> から AI が描いた図です（4660 × 620）。<b>枠の中を横スクロール</b>できます。用語に点線が付いた語はマウスを乗せると説明が出ます。</p>
+    <div class="frame"><iframe src="examples/02-system-development/development-flow.html" loading="lazy" title="システム開発：開発依頼 → 納品"></iframe></div>
+    <p class="more"><a href="examples/02-system-development/development-flow.html" target="_blank" rel="noopener">別タブで大きく見る →</a></p>
+  </section>
+</article>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <h2>記法（flow-notation v0.4）</h2>
+    <p class="sub">語彙は 28。行は役割、列は時系列。座標はピクセルではなく <code>(役割, 時点)</code> のペアで決まります。</p>
+    <table>
+      <tr><th>分類</th><th>書き方</th></tr>
+      <tr><td>軸</td><td><code>roles:</code> / <code>timeline:</code> / <code>milestones:</code></td></tr>
+      <tr><td>行為と成果物</td><td><code>act:</code> / <code>artifact:</code>（複数可） / <code>op:</code> / <code>by:</code>（人手・システム・外部）</td></tr>
+      <tr><td>時間</td><td><code>time:</code> / <code>freq:</code> / <code>wait:</code> / <code>sla:</code> / <code>on_overdue:</code></td></tr>
+      <tr><td>分岐と戻り</td><td><code>cond:</code>（<code>then</code>/<code>else</code>） / <code>except:</code> / <code>par:</code> / <code>join:</code> / <code>rework:</code> / <code>back:</code></td></tr>
+      <tr><td>補足</td><td><code>issue:</code>（課題） / <code>tobe:</code>（改善案） / <code>note:</code>（注釈） / <code>glossary:</code> と <code>[[用語]]</code></td></tr>
+    </table>
+    <p class="more"><a href="docs/SPEC.md">記法仕様の全文を読む →</a></p>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <h2>スキル</h2>
+    <p class="sub">Claude Code / Codex CLI のどちらでも動きます（同じ実体を両方の置き場所から参照）。</p>
+    <div class="cols">
+      <div class="card"><h3><code>flow-interview</code></h3>
+        <p>ヒアリングして <code>.flow</code> にします。<b>聞いていないことは書かない</b>のが鉄則で、空欄は正しい状態として扱います。</p></div>
+      <div class="card"><h3><code>flow-visualize</code></h3>
+        <p><code>.flow</code> から自己完結の HTML 図を描きます。図に出す言葉は日本語に固定しています。</p></div>
+      <div class="card"><h3><code>flow-verify</code></h3>
+        <p>ヒアリング記録・<code>.flow</code>・図の 3 つを突き合わせます。<b>会話に根拠のない記述</b>と<b>取りこぼし</b>を検出します。</p></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Apache License 2.0 ／ Copyright 2026 Cyberdog AI Lab（株式会社サイバードッグ）<br>
+    実例に登場する企業・担当者名はダミーです。シナリオ 01 のヒアリングはシミュレーションです。</p>
+    <p><a href="https://github.com/Cyberdog-AI-Lab/business-flow-visualizer">github.com/Cyberdog-AI-Lab/business-flow-visualizer</a></p>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll('.tabs').forEach(function(tabs){
+  tabs.addEventListener('click', function(e){
+    var b = e.target.closest('.tab'); if(!b) return;
+    var sc = tabs.closest('.sc');
+    sc.querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('is-on', x===b); });
+    sc.querySelectorAll('.pane').forEach(function(p){ p.classList.toggle('is-on', p.id===b.dataset.t); });
+  });
+});
+</script>

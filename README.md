@@ -7,6 +7,9 @@
 「業務ヒアリング」 --(flow-interview)-->  business.flow  --(flow-visualize)-->  business.html
 ```
 
+**デモサイト：** [`index.html`](index.html) — 実例ごとに「①ヒアリング → ②`.flow` → ③業務フロー図」を
+切り替えて確認できます（GitHub Pages で公開する場合はリポジトリのルートを配信対象にしてください）。
+
 ## できること
 
 - **記法（DSL）** … 役割（行）× 時系列（列）のスイムレーン前提の業務フロー記述。業務行為・成果物・操作内容・手段・条件/例外分岐・課題・待ち・手戻り・並行と合流・SLA・AS-IS/TO-BE などを表現。仕様は **[docs/SPEC.md](docs/SPEC.md)**。
