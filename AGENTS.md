@@ -2,6 +2,8 @@
 
 業務フローをテキスト（`.flow`）で記述し、**役割×時系列のスイムレーンHTML図**へ変換する記法（**flow-notation**）とスキル。
 
+**デモサイト：** https://business-flow-visualizer.vercel.app/
+
 ## これは何か
 
 - **記法（DSL）本体の仕様 → [docs/SPEC.md](docs/SPEC.md)**（唯一の正）
