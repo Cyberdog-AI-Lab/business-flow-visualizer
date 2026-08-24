@@ -1,6 +1,6 @@
 # examples — シナリオ集
 
-ブラウザで見るなら **デモサイト（https://business-flow-visualizer.vercel.app/）** が早いです。
+ここに置いたシナリオは、**デモサイト（https://business-flow-visualizer.vercel.app/）** でも見られます。
 各シナリオの「ヒアリング → `.flow` → 図」を切り替えて確認できます。
 
 1シナリオ = 1フォルダ。各フォルダに、そのシナリオの説明・（あれば）ヒアリング記録・記法テキスト・生成図を置く。
