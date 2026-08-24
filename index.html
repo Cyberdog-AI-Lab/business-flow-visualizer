@@ -8,7 +8,7 @@
     font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",system-ui,sans-serif}
   .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
   header{background:#0f172a;color:#e2e8f0;padding:56px 0 48px}
-  header h1{font-size:30px;margin:0 0 6px;letter-spacing:.01em}
+  header h1{font-size:30px;margin:0 0 6px}
   header .tagline{color:#94a3b8;font-size:14px;margin:0 0 22px}
   header p.big{font-size:17px;margin:0 0 26px;max-width:46em;color:#f1f5f9}
   .btns{display:flex;gap:10px;flex-wrap:wrap}
@@ -18,13 +18,13 @@
   h2{font-size:20px;margin:0 0 6px}
   .sec{padding:48px 0;border-bottom:1px solid var(--line)}
   .sec > .wrap > p.sub{color:var(--muted);font-size:14px;margin:0 0 24px}
-  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-  @media(max-width:820px){.steps{grid-template-columns:1fr}}
-  .step{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px}
+  .steps,.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  @media(max-width:820px){.steps,.cols{grid-template-columns:1fr}}
+  .step,.card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px}
   .step .n{display:inline-flex;width:24px;height:24px;align-items:center;justify-content:center;
     border-radius:6px;background:#eff6ff;color:var(--blue);font-size:12.5px;font-weight:700;margin-bottom:8px}
-  .step h3{font-size:15px;margin:0 0 6px}
-  .step p{font-size:13.5px;color:#475569;margin:0}
+  .step h3,.card h3{font-size:15px;margin:0 0 6px}
+  .step p,.card p{font-size:13.5px;color:#475569;margin:0}
   .step .who{display:inline-block;margin-top:10px;font-size:11.5px;padding:3px 8px;border-radius:99px;
     background:#f1f5f9;color:#475569;border:1px solid #e2e8f0}
   .sc{background:#fff;border:1px solid var(--line);border-radius:14px;padding:24px;margin-bottom:26px;
@@ -36,8 +36,7 @@
   .lead{color:#475569;font-size:14px;margin:0;max-width:44em}
   .meta{margin:0;font-size:12.5px;min-width:210px}
   .meta dt{color:var(--muted);font-size:11.5px;margin-top:6px}
-  .meta dd{margin:0 0 4px}
-  .meta .sub{color:var(--muted);font-size:11.5px}
+  .meta dd{margin:0 0 4px} .meta .sub{color:var(--muted);font-size:11.5px}
   .tags{display:flex;gap:6px;flex-wrap:wrap;margin:16px 0 18px}
   .tag{font-size:11.5px;padding:3px 9px;border-radius:99px;background:#f0f9ff;color:#0e7490;border:1px solid #bae6fd}
   .tabs{display:flex;gap:4px;border-bottom:2px solid var(--line);margin-bottom:18px;flex-wrap:wrap}
@@ -46,30 +45,36 @@
   .tab.is-on{color:var(--blue);border-bottom-color:var(--blue);font-weight:700}
   .pane{display:none} .pane.is-on{display:block}
   .note{font-size:13.5px;color:#475569;margin:0 0 14px}
-  .qa{background:#f8fafc;border:1px solid var(--line);border-left:3px solid var(--acc);
-    border-radius:8px;padding:14px 18px;font-size:14px}
-  .qa p{margin:.2em 0} .qa ul{margin:.3em 0;padding-left:1.3em} .qa li{margin:.15em 0}
-  .qa br{display:block;content:"";height:.4em}
+
+  /* ヒアリング記録（全文・スクロール） */
+  .doc{max-height:560px;overflow:auto;background:#fff;border:1px solid var(--line);
+    border-radius:10px;padding:20px 24px;font-size:13.5px;line-height:1.85}
+  .doc h4{font-size:15px;margin:26px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line)}
+  .doc h4:first-child{margin-top:0}
+  .doc h5{font-size:13.5px;margin:18px 0 6px;color:#334155}
+  .doc p{margin:.5em 0}
+  .doc ul{margin:.5em 0;padding-left:1.4em} .doc li{margin:.2em 0}
+  .doc blockquote{margin:.6em 0;padding:8px 14px;background:#f8fafc;border-left:3px solid var(--acc);
+    border-radius:0 6px 6px 0;color:#475569;font-size:12.5px}
+  .doc table{margin:.7em 0;font-size:12.5px}
+  .doc hr{border:0;border-top:1px solid var(--line);margin:20px 0}
+  .doc pre.in{background:#0f172a;color:#e2e8f0;border-radius:8px;padding:12px 14px;font-size:11.5px;overflow:auto}
+
+  /* コードブロック（白ハイライト対策：pre 内の code には背景を付けない） */
   pre{margin:0;background:#0f172a;color:#e2e8f0;border-radius:10px;padding:16px;overflow:auto;
-    max-height:440px;font-size:12px;line-height:1.65;
+    max-height:520px;font-size:12px;line-height:1.65;
     font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
-  .frame{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
-  iframe{width:100%;height:620px;border:0;display:block}
-  .more{margin:12px 0 0;font-size:13px}
-  .more a,.qa a{color:var(--blue)}
-  .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-  @media(max-width:820px){.cols{grid-template-columns:1fr}}
-  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px}
-  .card h3{font-size:14.5px;margin:0 0 6px}
-  .card code{font-size:12px}
-  .card p{font-size:13.5px;color:#475569;margin:0}
-  table{border-collapse:collapse;width:100%;font-size:13.5px;background:#fff}
-  th,td{border:1px solid var(--line);padding:8px 12px;text-align:left}
-  th{background:#f1f5f9;font-weight:700}
   code{background:#f1f5f9;padding:1px 5px;border-radius:4px;font-size:12.5px;
     font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
-  footer{padding:36px 0 60px;color:var(--muted);font-size:13px}
-  footer a{color:var(--blue)}
+  pre code{background:none;padding:0;border-radius:0;color:inherit;font-size:inherit}
+
+  .frame{border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+  iframe{width:100%;height:620px;border:0;display:block}
+  .more{margin:12px 0 0;font-size:13px} .more a{color:var(--blue)}
+  table{border-collapse:collapse;width:100%;font-size:13.5px;background:#fff}
+  th,td{border:1px solid var(--line);padding:8px 12px;text-align:left;vertical-align:top}
+  th{background:#f1f5f9;font-weight:700}
+  footer{padding:36px 0 60px;color:var(--muted);font-size:13px} footer a{color:var(--blue)}
 </style>
 
 <header>
@@ -130,13 +135,109 @@
   </div>
 
   <section class="pane is-on" id="s1-a">
-    <p class="note">エンジニアと AI が一緒に聞き取ります。以下は実際のやり取りからの抜粋です。</p>
-    <div class="qa"><p><strong>Q：</strong> Day0の受注取り込みから。誰が何をして、それはシステムですか手作業ですか？</p>
-<br>
-<p><strong>A（佐藤）：</strong> EDIで受注管理システムに自動で入ります。</p>
-<p>ただ<strong>内示（フォーキャスト）と確定数の突合は手作業</strong>。担当が毎朝30分くらいExcelで見比べてます。</p></div>
-    <p class="note">この 1 往復から、誰が・何を・手段・成果物・所要時間・頻度・困りごと の 7 項目が埋まります。</p>
-    <p class="more"><a href="examples/01-auto-parts-factory/ヒアリング時の会話.md">ヒアリング全文を見る →</a></p>
+    <p class="note">エンジニアと AI が一緒に聞き取ります。<b>記録の全文</b>です（枠の中をスクロール）。
+      各回答がどの記法フィールドになったかを引用で併記しています。</p>
+    <div class="doc"><h4>ヒアリング時の会話 — 自動車部品工場：受注 → 出荷</h4>
+<blockquote><strong>これはシミュレーションです。</strong> 実在の企業・担当者の発言ではなく、<br><code>flow-interview</code> スキルの手順を検証するために作成した架空のヒアリング記録です。<br>記法がどんな質問から埋まっていくかを追えるように、やり取りをそのまま残しています。</blockquote>
+<p><strong>聞き手：</strong> flow-interview（AI） <strong>話し手：</strong></p>
+<ul><li><strong>田中さん</strong>（製造課・工場職員）… 現場の実作業、紙の運用、待ち、困りごと</li><li><strong>佐藤さん</strong>（生産技術・エンジニア）… システム、EDI、リードタイム、自動化状況</li></ul>
+<p><code>flow-interview</code> の手順どおり、<strong>全体像 → 役割 → 時系列 → ステップ詳細 → 用語 → 分岐・並行・例外</strong> の順に、会話を小さく回して聞いている。 <strong>聞けなかったことは推測で埋めず、空欄のままにしている</strong>（末尾に一覧）。</p>
+<hr>
+<h4>Round 1. 全体像</h4>
+<p><strong>Q（聞き手）：</strong> この業務、どこから始まってどこで終わりますか？ 現状（AS-IS）を描きますか、理想（TO-BE）ですか？</p>
+<p><strong>A（佐藤・エンジニア）：</strong> 始まりは自動車メーカーさんからの<strong>確定注文がEDIで飛んでくる</strong>ところ。 終わりは<strong>製品を出荷して、ASN（事前出荷通知）を送るまで</strong>です。今回は<strong>現状（AS-IS）</strong>でお願いします。 理想を語る前に、今どこで詰まってるかを可視化したい。</p>
+<p><strong>A（田中・工場職員）：</strong> 現場感覚だと「注文が来た」→「作れ」って来て、「検査待ち」で止まって、 「出荷しろ」で終わる感じですね。</p>
+<blockquote>→ <code>view: AS-IS</code> ／ <code>start:</code> と <code>end:</code> が決まる</blockquote>
+<hr>
+<h4>Round 2. 役割（＝行）</h4>
+<p><strong>Q：</strong> 登場する部署と社外を、上流から順に挙げてください。社外・外部システムは分けたいので教えてください。</p>
+<p><strong>A（佐藤）：</strong> 社外が <strong>自動車メーカー</strong>（発注元）と <strong>部品サプライヤー</strong>。 社内は <strong>受注管理課 → 生産管理課 → 調達課 → 製造課 → 品質保証課 → 出荷課</strong> の順です。</p>
+<p><strong>Q：</strong> サプライヤーとのやり取りは人ですか、システムですか？</p>
+<p><strong>A（佐藤）：</strong> <strong>EDIの自動発注</strong>です。なので「外部」扱いでいいです。メーカーからの受注も同じくEDI。</p>
+<blockquote>→ <code>roles:</code> が確定。社外は <code>#社外</code>、外部システム連携は <code>#外部</code> を付ける</blockquote>
+<hr>
+<h4>Round 3. 時系列（＝列）とマイルストーン</h4>
+<p><strong>Q：</strong> 時間の刻みは何が自然ですか？ 節目はどこですか？</p>
+<p><strong>A（佐藤）：</strong> 営業日で <strong>Day0受注 → Day1計画 → Day2部品入荷 → Day3製造 → Day4検査 → Day5出荷</strong>。 標準リードタイムが<strong>5営業日</strong>です。</p>
+<p><strong>A（田中）：</strong> 節目は現場的には3つ。<strong>生産計画が確定</strong>した時点、<strong>製造が終わった</strong>時点、<strong>出荷した</strong>時点。</p>
+<blockquote>→ <code>timeline:</code> と <code>milestones:</code> が確定。「5営業日」は <code>sla:</code> へ</blockquote>
+<hr>
+<h4>Round 4. ステップの詳細（手段・成果物・時間・待ち・困りごと）</h4>
+<h5>受注の取り込み</h5>
+<p><strong>Q：</strong> Day0の受注取り込みから。誰が何をして、それはシステムですか手作業ですか？</p>
+<p><strong>A（佐藤）：</strong> EDIで受注管理システムに自動で入ります。 ただ<strong>内示（フォーキャスト）と確定数の突合は手作業</strong>。担当が毎朝30分くらいExcelで見比べてます。</p>
+<blockquote>→ <code>by: 外部/EDI</code> ／ <code>artifact: 受注管理システム</code> <code>op: 受注登録</code> ／ <code>time: 30分</code> <code>freq: 毎日</code><br>→ 「突合は手作業」は <code>issue:</code> に</blockquote>
+<p><strong>Q：</strong> そこは改善したいところですか？ 案があれば一緒に描けます。</p>
+<p><strong>A（佐藤）：</strong> うーん、そこは<strong>まだ具体的に考えていない</strong>です。今は製造の実績のほうが先。</p>
+<blockquote>→ <strong>改善案（<code>tobe</code>）は書かない</strong>。案が無いものを勝手に書かない</blockquote>
+<p><strong>Q：</strong> 差異があったらどうなりますか？</p>
+<p><strong>A（佐藤）：</strong> <strong>±10%を超えたらメーカー担当に電話・メールで照会</strong>します。 <strong>回答が半日〜1日待ち</strong>になって、計画着手が翌日にずれることも。</p>
+<p><strong>Q：</strong> 照会はその日のうちに投げますか？</p>
+<p><strong>A（佐藤）：</strong> はい、<strong>その日の午後</strong>には投げます。</p>
+<blockquote>→ <code>cond</code> ／ <code>wait: 回答待ち 半日〜1日</code> ／ <code>rework:</code> で受注確認へ戻す<br>→ 照会は「Day0 午後」の列に置ける</blockquote>
+<h5>生産計画</h5>
+<p><strong>Q：</strong> 計画は誰が、何を使って立てますか？</p>
+<p><strong>A（佐藤）：</strong> 生産管理課が<strong>生産管理システム（MRP）</strong>で立てて、確定させます。</p>
+<p><strong>Q：</strong> どれくらい時間がかかりますか？</p>
+<p><strong>A（佐藤）：</strong> <strong>測ってないですね。</strong> MRPを流すのは一瞬ですが、確認と調整が入るのでばらつきます。</p>
+<blockquote>→ <code>by: システム/生産管理システム(MRP)</code> ／ <code>artifact: 生産計画</code> <code>op: 計画確定</code><br>→ <strong>所要時間は空欄にする</strong>（測っていないため）</blockquote>
+<h5>部品の調達</h5>
+<p><strong>Q：</strong> 計画のあとは？ 同時に走る作業はありますか？</p>
+<p><strong>A（佐藤）：</strong> はい、<strong>計画確定後に「部品発注」と「治具・段取り準備」が並行</strong>で走ります。 両方そろわないと製造に入れません。</p>
+<p><strong>A（田中）：</strong> そう、<strong>材料が来ても段取りができてないと着手できない</strong>し、逆もある。ここは「両方待ち」です。</p>
+<p><strong>Q：</strong> 発注は具体的にどうしますか？</p>
+<p><strong>A（佐藤）：</strong> 不足分の<strong>発注データをEDIで送信</strong>します。納入されたら<strong>受入検収</strong>をして計上します。</p>
+<p><strong>Q：</strong> 部品の納入に期限はありますか？ 遅れたら？</p>
+<p><strong>A（佐藤）：</strong> <strong>発注翌日（1営業日）が納期</strong>。遅れたら調達から<strong>督促</strong>を掛けます。</p>
+<p><strong>Q：</strong> 部品の納入まわりで、困っていることはありますか？</p>
+<p><strong>A（佐藤）：</strong> <strong>そこは今、大きな問題にはなっていない</strong>です。だいたい期日どおり来ます。</p>
+<blockquote>→ <strong>課題（<code>issue</code>）は書かない</strong>。困りごとが無いなら空欄</blockquote>
+<p><strong>A（田中）：</strong> ただ、<strong>材料待ちで手が空くこと</strong>はありますよ。</p>
+<blockquote>→ <code>wait: 部品入荷待ち</code></blockquote>
+<h5>段取りと製造</h5>
+<p><strong>Q：</strong> 段取りの準備はどれくらいかかりますか？</p>
+<p><strong>A（田中）：</strong> <strong>半日</strong>くらいです。品種を切り替えるので。</p>
+<p><strong>Q：</strong> 製造の実作業について。何を使って、記録はどう残しますか？</p>
+<p><strong>A（田中）：</strong> <strong>紙の製造指示書</strong>を持ってラインで加工・組立。<strong>まる1日</strong>かかります。 実績は<strong>紙の日報に手書き</strong>して、<strong>翌朝まとめて生産管理システムに入力</strong>してます。 ここが一番のムダで、<strong>実績がリアルタイムで見えない</strong>。</p>
+<p><strong>Q：</strong> 改善案のイメージはありますか？</p>
+<p><strong>A（佐藤）：</strong> <strong>MESで設備から実績を自動収集</strong>したい。それが本命です。</p>
+<blockquote>→ <code>artifact: 製造指示書（紙）</code> <code>op: 実績を手書き記入</code> ／ <code>time: 1日</code><br>→ <code>issue:</code>「日報が紙。翌朝まとめて入力で、実績がリアルタイムに見えない」／ <code>tobe: MES</code></blockquote>
+<h5>検査</h5>
+<p><strong>Q：</strong> 検査は？ 待ちは発生しますか？</p>
+<p><strong>A（田中）：</strong> <strong>品質保証の出荷検査</strong>。ロットが溜まるまで<strong>検査待ちが半日</strong>くらい出ます。</p>
+<p><strong>Q：</strong> 検査そのものは何を使いますか？ 成績書はどこで作りますか？</p>
+<p><strong>A（田中）：</strong> 検査は<strong>治具に当てて測ります</strong>。<strong>成績書は検査システム</strong>で、測定値を入れると出ます。</p>
+<p><strong>Q：</strong> 検査そのものの所要時間は？</p>
+<p><strong>A（田中）：</strong> <strong>ロットの大きさでまちまち</strong>ですね。測ってはいないです。</p>
+<blockquote>→ <code>by: 人手/検査治具</code> ／ <code>artifact: 検査成績書</code> <code>op: 検査システムで作成</code> ／ <code>wait: 検査待ち 半日</code><br>→ <strong>所要時間は空欄にする</strong>（測っていないため）</blockquote>
+<hr>
+<h4>Round 4.5. 出てきた専門用語を拾う</h4>
+<p><strong>Q：</strong> いま出てきた言葉、業務を知らない人にも分かるようにしたいので教えてください。 「内示」って、どういう意味ですか？</p>
+<p><strong>A（佐藤）：</strong> 確定前にメーカーから示される<strong>見込みの注文数量</strong>です。確定注文とは数量が変わることがあります。</p>
+<p><strong>Q：</strong> EDI、MRP、MES、ASN は？</p>
+<p><strong>A（佐藤）：</strong> EDIは<strong>電子データ交換</strong>、企業間でデータを決まった形式でやり取りする仕組み。 MRPは<strong>資材所要量計画</strong>、計画から必要な部品と数量・時期を割り出すもの。 MESは<strong>製造実行システム</strong>、設備や作業者から実績をその場で集めるもの。 ASNは<strong>事前出荷通知</strong>、何をいつ送るかを出荷前に知らせるデータです。</p>
+<p><strong>Q：</strong> 現場の言葉も。「治具」「段取り替え」「受入検収」「検査成績書」は？</p>
+<p><strong>A（田中）：</strong> 治具は<strong>加工や組立のときに部品を正しい位置で固定する道具</strong>。 段取り替えは<strong>生産する品種を切り替えるために治具や設定を入れ替える作業</strong>。 受入検収は<strong>納入された部品を検査して、数量と品質を確認して受け入れる手続き</strong>。 検査成績書は<strong>検査の結果を記録した書類</strong>で、出荷する製品の品質を証明します。</p>
+<blockquote>→ <code>glossary:</code> に9語を定義。本文では <code>[[用語]]</code> で参照する</blockquote>
+<hr>
+<h4>Round 5. 分岐・例外・手戻り</h4>
+<p><strong>Q：</strong> 検査でNGが出たときは？</p>
+<p><strong>A（田中）：</strong> <strong>手直し（ライン外）して再検査</strong>に回します。 この手直しの記録が紙で残るので、後追いが大変。</p>
+<p><strong>Q：</strong> 出荷は？ 梱包は手作業ですか？</p>
+<p><strong>A（佐藤）：</strong> <strong>梱包・ラベル貼りは手作業</strong>です。そのあと<strong>納品書を発行</strong>、 最後に<strong>ASNをEDIでメーカーに送信</strong>して完了です。</p>
+<blockquote>→ <code>except: 検査NG?</code> ／ <code>ng:</code> で手直しへ ／ <code>rework:</code> で再検査へ戻す<br>→ 出荷課の2ステップ ／ 最後は <code>by: 外部/EDI(ASN)</code></blockquote>
+<hr>
+<h4>空欄にした項目（聞けなかった／答えが無かった）</h4>
+<p><code>flow-interview</code> の鉄則に従い、<strong>推測で埋めずに空欄のまま</strong>にした。</p>
+<table><tr><th>箇所</th><th>項目</th><th>理由</th></tr><tr><td>生産計画を立案・確定する</td><td>所要時間</td><td>「測っていない」（佐藤さん）</td></tr><tr><td>出荷検査を行う</td><td>所要時間</td><td>「ロットによってまちまち、測っていない」（田中さん）</td></tr><tr><td>部品を納入する</td><td>課題</td><td>「大きな問題にはなっていない」（佐藤さん）</td></tr><tr><td>受注データを取り込む</td><td>改善案</td><td>「まだ具体的に考えていない」（佐藤さん）</td></tr><tr><td>各ステップ</td><td>頻度</td><td>受注取り込み（毎日）以外は聞けていない</td></tr></table>
+<h4>推測で補った箇所</h4>
+<table><tr><th>箇所</th><th>内容</th><th>根拠</th></tr><tr><td>梱包・納品書発行 と ASN送信 を2ステップに分けた</td><td>聞き手による構造化</td><td>発言は「梱包して、納品書を出して、ASNを送る」という一連の流れ</td></tr><tr><td>治具・段取り準備を Day2 に配置</td><td>聞き手による配置判断</td><td>「両方そろわないと製造に入れない」からの逆算</td></tr></table>
+<h4>未ヒアリングの項目</h4>
+<ul><li>初品検査の有無</li><li>ロット・トレーサビリティ記録の運用</li><li>複数ラインの並行稼働</li><li>督促を誰がどの手順で行うか</li></ul>
+<hr>
+<h4>この会話から生まれたもの</h4>
+<ul><li><code>order-to-shipment.flow</code> … 上記のやり取りを記法に落としたもの</li><li><code>order-to-shipment.html</code> … <code>.flow</code> から <code>flow-visualize</code> で生成した業務フロー図</li></ul></div>
+    <p class="more"><a href="examples/01-auto-parts-factory/ヒアリング時の会話.md">元ファイルを開く →</a></p>
   </section>
 
   <section class="pane" id="s1-b">
@@ -322,20 +423,52 @@ steps:
   </div>
 
   <section class="pane is-on" id="s2-a">
-    <p class="note">エンジニアと AI が一緒に聞き取ります。以下は実際のやり取りからの抜粋です。</p>
-    <div class="qa"><p><strong>Q：</strong> 再提案のループはどこに付きますか。成果物の呼び方は。期間は分かりますか。</p>
-<p>顧客の判断待ちは発生しますか。課題（⚠）は付けますか。</p>
-<br>
+    <p class="note">エンジニアと AI が一緒に聞き取ります。<b>記録の全文</b>です（枠の中をスクロール）。
+      各回答がどの記法フィールドになったかを引用で併記しています。</p>
+    <div class="doc"><h4>ヒアリング時の会話 — システム開発：開発依頼 → 納品</h4>
+<blockquote><strong>これは実際のヒアリング記録です。</strong>（シナリオ① と違い、シミュレーションではありません）<br>業務の説明者は本リポジトリの利用者。聞き手は <code>flow-interview</code>（AI）。<br>記法がどんな質問から埋まっていくかを追えるように、やり取りをそのまま残しています。</blockquote>
+<p><strong>聞き手：</strong> flow-interview（AI） <strong>話し手：</strong> 依頼者（システム開発会社側）</p>
+<p><code>flow-interview</code> の手順どおり、<strong>全体像 → 役割 → 時系列 → ステップ詳細 → 分岐・手戻り</strong> の順に、会話を小さく回して聞いている。 <strong>聞けなかったこと・答えが無かったことは推測で埋めず、空欄のまま</strong>にしている（末尾に一覧）。</p>
+<hr>
+<h4>Round 1. 全体像</h4>
+<p><strong>Q：</strong> どんな業務ですか。どこから始まってどこで終わりますか。現状（AS-IS）ですか理想（TO-BE）ですか。</p>
+<p><strong>A：</strong> 1. システム開発の一通りの流れのフローです 2. 顧客からの開発依頼から始まり、システムの納品にて終わります 3. AS-IS を書いて、ところどころ TO-BE を織り交ぜたいです</p>
+<blockquote>→ <code>view: AS-IS</code> ／ <code>start:</code> と <code>end:</code> が決まる<br>※ TO-BE については Round 3 で「特にない」と確認され、最終的に AS-IS のみとなった</blockquote>
+<hr>
+<h4>Round 2. 役割と流れ（話し手が時系列順にまとめて説明）</h4>
+<p><strong>Q：</strong> 登場する役割を上流から順に。社外はいますか。兼務はありますか。</p>
+<p><strong>A：</strong>（時系列順に説明）</p>
+<blockquote>まずは顧客から、こういうデジタル化がしたいんだけど、システム化がしたいんだけど、といった<br>まず提案を受けるところから始まります。<br>そこで弊社上流工程担当が、まずヒアリングを行い、現状の業務分析や課題の整理などを行い、<br>ユーザーと合意を行います。<br>そこで、共通の業務課題認識が持てた後に、コンセプトの定義と今回のシステム化の対象をざっくり決めます。<br>ここで、第1回目の見積もり、要件・課題整理に対する見積もりを行います。<br><strong>弊社はシステム開発までに2段階の発注を行っており</strong>、第1回目はまず要件の整理と課題の整理を行います。<br>ユーザーと現状の業務や課題を認識合わせし、それを成果物として提出するのが第1回目です。<br>第2回目は、その整理した要件や課題、実際に実現したいフローをもとに機能の開発、<br>システム開発を行うのが第2回目です。<br><strong>ここで顧客は、システム開発まで行うかどうかはまだ判断する必要はありません。</strong><br>ひとまずは、第1回目の発注、要件の整理、課題の整理を行うかどうかを<br>この見積もりをもとに判断していただきます。<br>そこで合意に至り、発注となった際は、詳細な現状業務のヒアリングであったり、現状業務のフロー化、<br>課題の整理、課題の認識合わせなどを顧客と行い、<br>実際どんなところにシステム化改善の余地があるかを検討します。<br><strong>システム化改善の前に、業務そのもの自体を</strong>無駄な仕事の削減であったり、改善をできるかどうか、<br><strong>時には社内風土まで踏み込んで</strong>、そこをあるべき姿、理想の形をともにこのフェーズでは描きます。<br>そこで最終成果物として、現状の業務フロー（As-is）と理想の業務（To-be）、<br>さらには課題のマッピングを行ったものを成果物としてユーザーと合意を行い、<br>システム化に進むかどうかの判断をしていただきます。<br>この際に、第2回のシステム化に向けた見積もりも行い、提案いたします。<br>そこで合意をいただけた際は、実際にシステム開発に進んでいきます。<br>今回の業務フローでは、<strong>システム開発のフローについては詳細は省略</strong>いたしますが、<br>基本的に要件の整理、詳細設計、実装、テスト、ユーザーでのユーザーテストなど一通りを行い、<br>実業務で運用できるとユーザーとも合意がいただけた場合に、開発完了納品という形になります。</blockquote>
+<p><strong>Q（聞き取った構造を返して確認）：</strong> 15の行為として拾いました。担当者が分からないのが4か所あります。 （コンセプト定義／第1回見積／第2回見積／システム開発）</p>
+<p><strong>A：</strong> 4、5、11 は<strong>上流工程担当</strong>、13 は<strong>会社全体の開発担当</strong>が行います。</p>
+<blockquote>→ <code>roles: [顧客#社外, 上流工程担当, 開発担当]</code> の3行に確定</blockquote>
+<hr>
+<h4>Round 3. 時系列・分岐・TO-BE</h4>
+<p><strong>Q：</strong> 時系列の刻みはフェーズ名ですか期間ですか。判断が NO のときはどうなりますか。 図に併記する TO-BE（御社の進め方の改善案）はありますか。</p>
 <p><strong>A：</strong></p>
-<ul><li>基本的には、<strong>NO を言われた際の見積もりに戻ります</strong></li>
-<li><strong>見積もりは「見積書」</strong>でいいです。<strong>10 の成果物もそれでいい</strong>です</li>
-</ul><p>（現状業務フロー／理想業務フロー／課題マッピング）</p>
-<ul><li><strong>2、8 の段階でも途中、成果物は共有します。ただし、納品という形ではありません</strong></li>
-<li><strong>各フェーズの期間は、場合によってまちまち</strong>なので、一回視覚化できてからちょっと考える</li>
-<li><strong>顧客の判断待ちは、もちろん発生します</strong></li>
-<li><strong>特に課題はなし</strong>でいいです</li></ul></div>
-    <p class="note">「まちまち」「特になし」という答えは、推測で埋めず<strong>空欄のまま</strong>にしています。</p>
-    <p class="more"><a href="examples/02-system-development/ヒアリング時の会話.md">ヒアリング全文を見る →</a></p>
+<ul><li>時系列の好みは<strong>「フェーズ名」</strong>です</li><li>判断が NO だった場合は基本的には終了になりますが、<strong>機能の縮小や再見積もりなどを行い、再提案する場合もあります。 それは顧客から要望があった場合のみに限ります</strong></li><li><strong>14の運用できないは、開発フェーズに戻るでやり直し</strong>です</li><li><strong>このシステム開発フローに関する TO-BE は特にありません。AS-IS をただ視覚化したいだけです</strong></li></ul>
+<blockquote>→ <code>view: AS-IS</code>、<code>tobe</code> は使わない</blockquote>
+<hr>
+<h4>Round 4. 成果物・期間・待ち・課題</h4>
+<p><strong>Q：</strong> 再提案のループはどこに付きますか。成果物の呼び方は。期間は分かりますか。 顧客の判断待ちは発生しますか。課題（⚠）は付けますか。</p>
+<p><strong>A：</strong></p>
+<ul><li>基本的には、<strong>NO を言われた際の見積もりに戻ります</strong></li><li><strong>見積もりは「見積書」</strong>でいいです。<strong>10 の成果物もそれでいい</strong>です （現状業務フロー／理想業務フロー／課題マッピング）</li><li><strong>2、8 の段階でも途中、成果物は共有します。ただし、納品という形ではありません</strong></li><li><strong>各フェーズの期間は、場合によってまちまち</strong>なので、一回視覚化できてからちょっと考える</li><li><strong>顧客の判断待ちは、もちろん発生します</strong></li><li><strong>特に課題はなし</strong>でいいです</li></ul>
+<blockquote>→ <code>artifact: 見積書</code> ／ <code>artifact: 現状業務フロー・理想業務フロー・課題マッピング</code><br>→ 2・8 は <code>artifact: 途中成果物</code> <code>op: 共有</code><br>→ <code>time</code> / <code>freq</code> は<strong>空欄</strong>。<code>issue</code> は<strong>使わない</strong>。判断ノードに <code>wait: 顧客の判断待ち</code></blockquote>
+<hr>
+<h4>Round 5. 残りの確認（NOの既定・途中成果物の名前・マイルストーン）</h4>
+<p><strong>Q：</strong> NO のときの既定は「終了」ですか「見積もりに戻る」ですか。 途中で共有する成果物の呼び方は。マイルストーンは置きますか。</p>
+<p><strong>A：</strong></p>
+<ul><li><strong>B（NO → 見積もりに戻って再提案するのが基本。まとまらなければ終了）</strong></li><li><strong>途中成果物</strong>で</li><li>マイルストーンは、<strong>第1回発注、第2回発注、納品</strong>にしましょう</li></ul>
+<blockquote>→ 分岐の <code>else</code> は再提案へ。再提案がまとまらないときだけ終了<br>→ <code>milestones: { 第1回発注, 第2回発注, 納品 }</code></blockquote>
+<hr>
+<h4>空欄にした項目（聞けなかった／答えが無かった）</h4>
+<p><code>flow-interview</code> の鉄則に従い、<strong>推測で埋めずに空欄のまま</strong>にした。</p>
+<table><tr><th>箇所</th><th>項目</th><th>理由</th></tr><tr><td>全ステップ</td><td>所要時間（<code>time</code>）</td><td>「場合によってまちまち。視覚化してから考える」</td></tr><tr><td>全ステップ</td><td>頻度（<code>freq</code>）</td><td>伺っていない</td></tr><tr><td>全ステップ</td><td>課題（<code>issue</code>）</td><td>「特に課題はなしでいい」</td></tr><tr><td>全ステップ</td><td>改善案（<code>tobe</code>）</td><td>「このフローに関する TO-BE は特にない」</td></tr><tr><td>判断の待ち</td><td>待ち時間の長さ</td><td>「判断待ちは発生する」とだけ伺った。日数は未確認</td></tr><tr><td>手段（<code>by</code>）</td><td>各行為をどう実施するか（対面／オンライン／ツール等）</td><td>伺っていない</td></tr></table>
+<h4>推測で補った箇所</h4>
+<table><tr><th>箇所</th><th>内容</th><th>根拠</th></tr><tr><td>フェーズ名15個</td><td>聞き手が命名し、確認を取った</td><td>話し手の説明を区切って命名。Round 3 で提示し了承を得た</td></tr><tr><td>「顧客が判断する」を1ステップとして独立させた</td><td>聞き手による構造化</td><td>「判断していただきます」という発言を、顧客レーンの行為として明示するため</td></tr><tr><td>再提案がまとまらない場合の終了を分岐として表現</td><td>聞き手による構造化</td><td>「まとまらなければ終了」（Round 5・B）を分岐で表した</td></tr></table>
+<h4>未ヒアリングの項目</h4>
+<ul><li>各フェーズの期間・工数</li><li>各行為の手段（対面／オンライン／使用ツール）</li><li>システム開発フェーズの内訳（本人の指示により詳細は省略）</li><li>営業・PM など、3役割以外の関与者の有無</li></ul></div>
+    <p class="more"><a href="examples/02-system-development/ヒアリング時の会話.md">元ファイルを開く →</a></p>
   </section>
 
   <section class="pane" id="s2-b">
