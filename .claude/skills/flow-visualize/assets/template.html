@@ -1,10 +1,13 @@
 <title>{{TITLE}}</title>
 <!--
   flow-visualize テンプレート。
-  差し替え位置は、二重波かっこで囲んだ大文字の目印（TITLE / SVG / LEGEND / SOURCE）。
+  差し替え位置は、二重波かっこで囲んだ大文字の目印
+  （TITLE / CORNER / COLHEAD / ROWHEAD / SVG / LEGEND / GLOSSARY / SOURCE）。
   重要: この解説文には目印そのものを書かないこと。単純な文字列置換をすると
   コメント内まで置換され、生成物が壊れる。置換前にコメントを除去する運用でもよい。
-  自己完結（外部依存なし）。ページ本体は横スクロールさせず、.board 内だけスクロールさせる。
+  自己完結（外部依存なし）。ページ本体は横スクロールさせず、図の枠内だけスクロールさせる。
+  図は4ペイン構成：左上の角・列見出し（上に固定）・行見出し（左に固定）・本体（唯一スクロールする）。
+  見出しのスクロールは本体に追従させる。本体は右ドラッグで掴んで動かせる。
 -->
 <style>
   :root{ --bg:#f8fafc; --ink:#0f172a; --muted:#64748b; }
@@ -13,9 +16,26 @@
     font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;}
   .wrap{max-width:1500px;margin:0 auto;padding:24px 20px 60px}
   h1{font-size:20px;margin:0 0 12px}
-  .board{overflow-x:auto;border:1px solid #e2e8f0;border-radius:12px;background:#fff;
+  .board{border:1px solid #e2e8f0;border-radius:12px;background:#fff;overflow:hidden;
     box-shadow:0 1px 3px rgba(15,23,42,.06)}
   svg{display:block}
+
+  /* 図の枠：左上=角 / 上=列見出し（固定）/ 左=行見出し（固定）/ 右下=本体（スクロール） */
+  .viewport{display:grid;
+    grid-template-columns:var(--label-w) 1fr;
+    grid-template-rows:var(--head-h) 1fr;
+    height:min(78vh, var(--board-h));
+    background:#fff}
+  .corner{background:#0f172a;color:#e2e8f0;display:flex;align-items:center;justify-content:center;
+    font-size:11.5px;border-right:1px solid #334155}
+  .colhead{overflow:hidden;background:#0f172a}
+  .rowhead{overflow:hidden;border-right:1px solid #e2e8f0;background:#fff}
+  .bodypane{overflow:auto;cursor:default;overscroll-behavior:contain}
+  .bodypane.panning{cursor:grabbing}
+  .bodypane.panning *{user-select:none}
+  .hint{font-size:11.5px;color:var(--muted);margin:8px 2px 0}
+  .hint kbd{background:#f1f5f9;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:4px;
+    padding:1px 5px;font-size:11px;font-family:inherit}
   .card{border:1px solid #e2e8f0;border-radius:12px;background:#fff;padding:16px 18px;margin-top:16px}
   .card h2{font-size:14px;margin:0 0 12px}
   .legend{display:flex;flex-wrap:wrap;gap:10px 16px}
@@ -39,11 +59,20 @@
   <h1>{{TITLE}}</h1>
 
   <div class="board">
-    <!-- 下の目印を、生成した svg 要素に差し替える。
-         defs に矢印マーカーを含めること: id="a" 通常(#334155) /
-         id="ar" 手戻り(#dc2626) / id="at" on_overdue(#d97706) -->
-    {{SVG}}
+    <!-- 4つの目印にそれぞれ svg を差し込む。座標系は共通で、各ペインは viewBox で切り出す。
+         角=固定テキスト / 列見出し=上に固定 / 行見出し=左に固定 / 本体=唯一スクロールする。
+         本体の defs に矢印マーカーを含めること:
+         id="a" 通常(#334155) / id="ar" 手戻り(#dc2626) / id="at" on_overdue(#d97706)
+         --label-w / --head-h / --board-h は生成時に実寸へ差し替える。 -->
+    <div class="viewport" style="--label-w:160px; --head-h:56px; --board-h:900px">
+      <div class="corner">{{CORNER}}</div>
+      <div class="colhead" id="colhead">{{COLHEAD}}</div>
+      <div class="rowhead" id="rowhead">{{ROWHEAD}}</div>
+      <div class="bodypane" id="bodypane">{{SVG}}</div>
+    </div>
   </div>
+  <p class="hint">役割（行）と時系列（列）の見出しは固定されます。
+    図の中はスクロールのほか、<kbd>右ドラッグ</kbd>で掴んで動かせます。</p>
 
   <div class="card">
     <h2>凡例</h2>
@@ -64,6 +93,53 @@
 </div>
 
 <div id="tip"></div>
+<script>
+/* 見出しの固定：本体のスクロールに列見出し・行見出しを追従させる */
+(function(){
+  var body=document.getElementById('bodypane'),
+      col=document.getElementById('colhead'),
+      row=document.getElementById('rowhead');
+  if(!body) return;
+  /* 本体にスクロールバーが出ると、見出し側より本体のほうが余分にスクロールできてしまい、
+     端で見出しがずれる。見出し側にバーの幅ぶんの余白を足して最大量を揃える。 */
+  function fitScrollbar(){
+    var sw=body.offsetWidth-body.clientWidth,   /* 縦バーの幅 */
+        sh=body.offsetHeight-body.clientHeight; /* 横バーの高さ */
+    if(col&&col.firstElementChild) col.firstElementChild.style.marginRight =sw+'px';
+    if(row&&row.firstElementChild) row.firstElementChild.style.marginBottom=sh+'px';
+  }
+  fitScrollbar();
+  window.addEventListener('resize',fitScrollbar);
+
+  function sync(){
+    if(col) col.scrollLeft=body.scrollLeft;
+    if(row) row.scrollTop =body.scrollTop;
+  }
+  body.addEventListener('scroll',sync,{passive:true});
+
+  /* 右ドラッグで掴んで動かす */
+  var on=false,sx=0,sy=0,sl=0,st=0,moved=false;
+  body.addEventListener('contextmenu',function(e){ e.preventDefault(); });
+  body.addEventListener('mousedown',function(e){
+    if(e.button!==2) return;
+    on=true; moved=false; sx=e.clientX; sy=e.clientY;
+    sl=body.scrollLeft; st=body.scrollTop;
+    body.classList.add('panning'); e.preventDefault();
+  });
+  window.addEventListener('mousemove',function(e){
+    if(!on) return;
+    var dx=e.clientX-sx, dy=e.clientY-sy;
+    if(Math.abs(dx)>2||Math.abs(dy)>2) moved=true;
+    body.scrollLeft=sl-dx; body.scrollTop=st-dy;
+    sync();   /* scroll イベントを待たずに見出しを合わせる */
+  });
+  window.addEventListener('mouseup',function(){
+    if(!on) return;
+    on=false; body.classList.remove('panning');
+  });
+})();
+</script>
+
 <script>
 (function(){
   var tip=document.getElementById('tip');
