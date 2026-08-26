@@ -7,9 +7,26 @@
     font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;}
   .wrap{max-width:1500px;margin:0 auto;padding:24px 20px 60px}
   h1{font-size:20px;margin:0 0 12px}
-  .board{overflow-x:auto;border:1px solid #e2e8f0;border-radius:12px;background:#fff;
+  .board{border:1px solid #e2e8f0;border-radius:12px;background:#fff;overflow:hidden;
     box-shadow:0 1px 3px rgba(15,23,42,.06)}
   svg{display:block}
+
+  /* 図の枠：左上=角 / 上=列見出し（固定）/ 左=行見出し（固定）/ 右下=本体（スクロール） */
+  .viewport{display:grid;
+    grid-template-columns:var(--label-w) 1fr;
+    grid-template-rows:var(--head-h) 1fr;
+    height:min(78vh, var(--board-h));
+    background:#fff}
+  .corner{background:#0f172a;color:#e2e8f0;display:flex;align-items:center;justify-content:center;
+    font-size:11.5px;border-right:1px solid #334155}
+  .colhead{overflow:hidden;background:#0f172a}
+  .rowhead{overflow:hidden;border-right:1px solid #e2e8f0;background:#fff}
+  .bodypane{overflow:auto;cursor:grab;overscroll-behavior:contain}
+  .bodypane.panning{cursor:grabbing}
+  .bodypane.panning *{user-select:none}
+  .hint{font-size:11.5px;color:var(--muted);margin:8px 2px 0}
+  .hint kbd{background:#f1f5f9;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:4px;
+    padding:1px 5px;font-size:11px;font-family:inherit}
   .card{border:1px solid #e2e8f0;border-radius:12px;background:#fff;padding:16px 18px;margin-top:16px}
   .card h2{font-size:14px;margin:0 0 12px}
   .legend{display:flex;flex-wrap:wrap;gap:10px 16px}
@@ -34,7 +51,36 @@
 
   <div class="board">
     
-    <svg viewBox="0 0 4660 620" width="4660" height="620" xmlns="http://www.w3.org/2000/svg" font-family="inherit">
+    <div class="viewport" style="--label-w:160px; --head-h:56px; --board-h:516px">
+      <div class="corner">役割 \ 時系列</div>
+      <div class="colhead" id="colhead"><svg width="4500" height="56" viewBox="160 0 4500 56" xmlns="http://www.w3.org/2000/svg" font-family="inherit">
+    <rect x="160" y="0" width="4500" height="56" fill="#0f172a"/>
+    <g fill="#cbd5e1" font-size="11.5" text-anchor="middle">
+    <text x="310" y="21">相談</text><text x="610" y="21">現状分析</text><text x="910" y="21">課題合意</text><text x="1210" y="21">対象決定</text>
+    <text x="1510" y="21">第1回見積</text><text x="1810" y="21">第1回発注</text><text x="2110" y="21">詳細ヒアリング</text><text x="2410" y="21">課題整理</text>
+    <text x="2710" y="21">業務改善検討</text><text x="3010" y="21">成果物合意</text><text x="3310" y="21">第2回見積</text><text x="3610" y="21">第2回発注</text>
+    <text x="3910" y="21">システム開発</text><text x="4210" y="21">検収</text><text x="4510" y="21">納品</text>
+  </g>
+    <g font-size="10.5" text-anchor="middle" fill="#ffffff">
+    <g transform="translate(1810,0)"><rect x="-52" y="30" width="104" height="20" rx="10" fill="#7c3aed"/><text y="44">★ 第1回発注</text></g>
+    <g transform="translate(3610,0)"><rect x="-52" y="30" width="104" height="20" rx="10" fill="#7c3aed"/><text y="44">★ 第2回発注</text></g>
+    <g transform="translate(4510,0)"><rect x="-36" y="30" width="72" height="20" rx="10" fill="#7c3aed"/><text y="44">★ 納品</text></g>
+  </g>
+  </svg></div>
+      <div class="rowhead" id="rowhead"><svg width="160" height="516" viewBox="0 56 160 516" xmlns="http://www.w3.org/2000/svg" font-family="inherit">
+    <rect x="0" y="56" width="160" height="172" fill="#f1f5f9"/>
+    <rect x="0" y="228" width="160" height="172" fill="#ffffff"/>
+    <rect x="0" y="400" width="160" height="172" fill="#f8fafc"/>
+    <line x1="0" y1="228" x2="160" y2="228" stroke="#e8edf3"/>
+    <line x1="0" y1="400" x2="160" y2="400" stroke="#e8edf3"/>
+    <line x1="0" y1="572" x2="160" y2="572" stroke="#e8edf3"/>
+    <g font-size="12" text-anchor="middle" fill="#1e293b">
+    <text x="80" y="138">顧客</text><text x="80" y="154" font-size="9.5" fill="#94a3b8">社外</text>
+    <text x="80" y="314">上流工程担当</text>
+    <text x="80" y="486">開発担当</text>
+  </g>
+  </svg></div>
+      <div class="bodypane" id="bodypane"><svg width="4500" height="516" viewBox="160 56 4500 516" xmlns="http://www.w3.org/2000/svg" font-family="inherit">
   <defs>
     <marker id="a" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#334155"/></marker>
     <marker id="ar" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#dc2626"/></marker>
@@ -47,25 +93,10 @@
   <g stroke="#7c3aed" stroke-width="1.6" stroke-dasharray="6 5" opacity="0.35">
     <line x1="1810" y1="56" x2="1810" y2="572"/><line x1="3610" y1="56" x2="3610" y2="572"/><line x1="4510" y1="56" x2="4510" y2="572"/>
   </g>
-  <rect x="0" y="0" width="4660" height="56" fill="#0f172a"/>
-  <text x="80" y="24" fill="#e2e8f0" font-size="11.5" text-anchor="middle">役割 \ 時系列</text>
-  <line x1="160" y1="0" x2="160" y2="572" stroke="#e2e8f0"/>
-  <g fill="#cbd5e1" font-size="11.5" text-anchor="middle">
-    <text x="310" y="21">相談</text><text x="610" y="21">現状分析</text><text x="910" y="21">課題合意</text><text x="1210" y="21">対象決定</text>
-    <text x="1510" y="21">第1回見積</text><text x="1810" y="21">第1回発注</text><text x="2110" y="21">詳細ヒアリング</text><text x="2410" y="21">課題整理</text>
-    <text x="2710" y="21">業務改善検討</text><text x="3010" y="21">成果物合意</text><text x="3310" y="21">第2回見積</text><text x="3610" y="21">第2回発注</text>
-    <text x="3910" y="21">システム開発</text><text x="4210" y="21">検収</text><text x="4510" y="21">納品</text>
-  </g>
-  <g font-size="10.5" text-anchor="middle" fill="#ffffff">
-    <g transform="translate(1810,0)"><rect x="-52" y="30" width="104" height="20" rx="10" fill="#7c3aed"/><text y="44">★ 第1回発注</text></g>
-    <g transform="translate(3610,0)"><rect x="-52" y="30" width="104" height="20" rx="10" fill="#7c3aed"/><text y="44">★ 第2回発注</text></g>
-    <g transform="translate(4510,0)"><rect x="-36" y="30" width="72" height="20" rx="10" fill="#7c3aed"/><text y="44">★ 納品</text></g>
-  </g>
-  <g font-size="12" text-anchor="middle" fill="#1e293b">
-    <text x="80" y="138">顧客</text><text x="80" y="154" font-size="9.5" fill="#94a3b8">社外</text>
-    <text x="80" y="314">上流工程担当</text>
-    <text x="80" y="486">開発担当</text>
-  </g>
+  
+  
+  
+  
 
   <!-- edges -->
   <path d="M330,159 C420,200 480,250 529,286" fill="none" stroke="#334155" stroke-width="2" marker-end="url(#a)"/>
@@ -195,9 +226,11 @@
     <text x="4510" y="490" text-anchor="middle" font-size="11" fill="#0f172a">開発完了として納品する</text>
     <rect x="4441" y="514" width="138" height="19" rx="9" fill="#f5f3ff" stroke="#7c3aed"/><text x="4510" y="528" text-anchor="middle" font-size="9.5" fill="#6b21a8">★ 納品</text>
   </g>
-</svg>
-
+</svg></div>
+    </div>
   </div>
+  <p class="hint">役割（行）と時系列（列）の見出しは固定されます。
+    図の中はスクロールのほか、<kbd>ドラッグ</kbd>で掴んで動かせます。</p>
 
   <div class="card">
     <h2>凡例</h2>
@@ -216,7 +249,6 @@
 </div>
   </div>
 
-
   <div class="card">
     <h2>補足</h2>
     <ul style="margin:0;padding-left:20px;font-size:12.5px;line-height:1.8;color:#334155">
@@ -233,6 +265,7 @@
       <li><b>戻りの線：</b> 「見積もりへ戻る」「開発へ戻る」は記法の <code>back:</code> で戻りと指定されているため、手戻りと同じ赤い破線で描いています。</li>
     </ul>
   </div>
+
   <div class="card">
     <h2>記法ソース（.flow）</h2>
     <pre># flow-notation v0.4 — システム開発：開発依頼 → 納品 (AS-IS)
@@ -404,6 +437,52 @@ steps:
 </div>
 
 <div id="tip"></div>
+<script>
+/* 見出しの固定：本体のスクロールに列見出し・行見出しを追従させる */
+(function(){
+  var body=document.getElementById('bodypane'),
+      col=document.getElementById('colhead'),
+      row=document.getElementById('rowhead');
+  if(!body) return;
+  /* 本体にスクロールバーが出ると、見出し側より本体のほうが余分にスクロールできてしまい、
+     端で見出しがずれる。見出し側にバーの幅ぶんの余白を足して最大量を揃える。 */
+  function fitScrollbar(){
+    var sw=body.offsetWidth-body.clientWidth,   /* 縦バーの幅 */
+        sh=body.offsetHeight-body.clientHeight; /* 横バーの高さ */
+    if(col&&col.firstElementChild) col.firstElementChild.style.marginRight =sw+'px';
+    if(row&&row.firstElementChild) row.firstElementChild.style.marginBottom=sh+'px';
+  }
+  fitScrollbar();
+  window.addEventListener('resize',fitScrollbar);
+
+  function sync(){
+    if(col) col.scrollLeft=body.scrollLeft;
+    if(row) row.scrollTop =body.scrollTop;
+  }
+  body.addEventListener('scroll',sync,{passive:true});
+
+  /* 左ドラッグで掴んで動かす（既定の文字選択は抑止する） */
+  var on=false,sx=0,sy=0,sl=0,st=0,moved=false;
+  body.addEventListener('mousedown',function(e){
+    if(e.button!==0) return;
+    on=true; moved=false; sx=e.clientX; sy=e.clientY;
+    sl=body.scrollLeft; st=body.scrollTop;
+    body.classList.add('panning'); e.preventDefault();
+  });
+  window.addEventListener('mousemove',function(e){
+    if(!on) return;
+    var dx=e.clientX-sx, dy=e.clientY-sy;
+    if(Math.abs(dx)>2||Math.abs(dy)>2) moved=true;
+    body.scrollLeft=sl-dx; body.scrollTop=st-dy;
+    sync();   /* scroll イベントを待たずに見出しを合わせる */
+  });
+  window.addEventListener('mouseup',function(){
+    if(!on) return;
+    on=false; body.classList.remove('panning');
+  });
+})();
+</script>
+
 <script>
 (function(){
   var tip=document.getElementById('tip');
