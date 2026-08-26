@@ -21,7 +21,7 @@
     font-size:11.5px;border-right:1px solid #334155}
   .colhead{overflow:hidden;background:#0f172a}
   .rowhead{overflow:hidden;border-right:1px solid #e2e8f0;background:#fff}
-  .bodypane{overflow:auto;cursor:default;overscroll-behavior:contain}
+  .bodypane{overflow:auto;cursor:grab;overscroll-behavior:contain}
   .bodypane.panning{cursor:grabbing}
   .bodypane.panning *{user-select:none}
   .hint{font-size:11.5px;color:var(--muted);margin:8px 2px 0}
@@ -238,7 +238,7 @@
     </div>
   </div>
   <p class="hint">役割（行）と時系列（列）の見出しは固定されます。
-    図の中はスクロールのほか、<kbd>右ドラッグ</kbd>で掴んで動かせます。</p>
+    図の中はスクロールのほか、<kbd>ドラッグ</kbd>で掴んで動かせます。</p>
 
   <div class="card">
     <h2>凡例</h2>
@@ -464,11 +464,10 @@ steps:
   }
   body.addEventListener('scroll',sync,{passive:true});
 
-  /* 右ドラッグで掴んで動かす */
+  /* 左ドラッグで掴んで動かす（既定の文字選択は抑止する） */
   var on=false,sx=0,sy=0,sl=0,st=0,moved=false;
-  body.addEventListener('contextmenu',function(e){ e.preventDefault(); });
   body.addEventListener('mousedown',function(e){
-    if(e.button!==2) return;
+    if(e.button!==0) return;
     on=true; moved=false; sx=e.clientX; sy=e.clientY;
     sl=body.scrollLeft; st=body.scrollTop;
     body.classList.add('panning'); e.preventDefault();
