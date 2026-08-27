@@ -15,7 +15,7 @@
   .viewport{display:grid;
     grid-template-columns:var(--label-w) 1fr;
     grid-template-rows:var(--head-h) 1fr;
-    height:min(78vh, var(--board-h));
+    height:min(78vh, calc(var(--head-h) + var(--board-h)));
     background:#fff}
   .corner{background:#0f172a;color:#e2e8f0;display:flex;align-items:center;justify-content:center;
     font-size:11.5px;border-right:1px solid #334155}
@@ -24,6 +24,13 @@
   .bodypane{overflow:auto;cursor:grab;overscroll-behavior:contain}
   .bodypane.panning{cursor:grabbing}
   .bodypane.panning *{user-select:none}
+  /* 拡大・縮小の操作列 */
+  .toolbar{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin:0 0 8px}
+  .toolbar button{font:inherit;font-size:12px;line-height:1;color:#334155;background:#fff;
+    border:1px solid #cbd5e1;border-radius:7px;padding:6px 10px;cursor:pointer}
+  .toolbar button:hover{background:#f1f5f9}
+  .toolbar button:active{background:#e2e8f0}
+  .toolbar .lvl{min-width:56px;text-align:center;font-variant-numeric:tabular-nums}
   .hint{font-size:11.5px;color:var(--muted);margin:8px 2px 0}
   .hint kbd{background:#f1f5f9;border:1px solid #cbd5e1;border-bottom-width:2px;border-radius:4px;
     padding:1px 5px;font-size:11px;font-family:inherit}
@@ -48,6 +55,13 @@
 
 <div class="wrap">
   <h1>自動車部品工場：受注 → 出荷（現状フロー）</h1>
+
+  <div class="toolbar">
+    <button type="button" id="zoomOut" title="縮小する">−</button>
+    <button type="button" id="zoomLevel" class="lvl" title="等倍に戻す">100%</button>
+    <button type="button" id="zoomIn" title="拡大する">＋</button>
+    <button type="button" id="zoomFit" title="横幅を枠に合わせる">幅に合わせる</button>
+  </div>
 
   <div class="board">
     
@@ -238,7 +252,8 @@
     </div>
   </div>
   <p class="hint">役割（行）と時系列（列）の見出しは固定されます。
-    図の中はスクロールのほか、<kbd>ドラッグ</kbd>で掴んで動かせます。</p>
+    図の中はスクロールのほか、<kbd>ドラッグ</kbd>で掴んで動かせます。
+    拡大・縮小は上のボタン、または <kbd>Ctrl</kbd>（Mac は <kbd>⌘</kbd>）を押しながらホイール／ピンチでもできます。</p>
 
   <div class="card">
     <h2>凡例</h2>
@@ -445,7 +460,9 @@ steps:
 (function(){
   var body=document.getElementById('bodypane'),
       col=document.getElementById('colhead'),
-      row=document.getElementById('rowhead');
+      row=document.getElementById('rowhead'),
+      vp=body&&body.parentNode,
+      corner=vp&&vp.querySelector('.corner');
   if(!body) return;
   /* 本体にスクロールバーが出ると、見出し側より本体のほうが余分にスクロールできてしまい、
      端で見出しがずれる。見出し側にバーの幅ぶんの余白を足して最大量を揃える。 */
@@ -483,6 +500,66 @@ steps:
     if(!on) return;
     on=false; body.classList.remove('panning');
   });
+
+  /* 拡大・縮小：3ペインは同じ座標系なので、表示サイズと見出しの幅・高さへ
+     同じ倍率を掛ければ、見出しと本体の位置関係は崩れない。 */
+  var panes=[col,row,body].map(function(p){
+        var el=p&&p.firstElementChild;
+        return el&&{el:el, w:parseFloat(el.getAttribute('width')), h:parseFloat(el.getAttribute('height'))};
+      }).filter(function(b){ return b&&b.w&&b.h; }),
+      bodyBase=panes[panes.length-1],
+      px=function(n){ return parseFloat(vp.style.getPropertyValue(n))||0; },
+      baseLabel=px('--label-w'), baseHead=px('--head-h'), baseBoard=px('--board-h'),
+      baseCorner=corner?parseFloat(getComputedStyle(corner).fontSize):0,
+      lvl=document.getElementById('zoomLevel'),
+      z=1, MIN=0.15, MAX=2.5;   /* 下限は「幅に合わせる」で全体を俯瞰できる値にする */
+
+  function apply(){
+    panes.forEach(function(b){
+      b.el.style.width =(b.w*z)+'px';
+      b.el.style.height=(b.h*z)+'px';
+    });
+    vp.style.setProperty('--label-w',(baseLabel*z)+'px');
+    vp.style.setProperty('--head-h', (baseHead *z)+'px');
+    vp.style.setProperty('--board-h',(baseBoard*z)+'px');
+    if(corner) corner.style.fontSize=(baseCorner*z)+'px';
+    if(lvl) lvl.textContent=Math.round(z*100)+'%';
+    fitScrollbar();
+  }
+  /* cx, cy は画面上の座標（省略時は枠の中央）。そこにある図の点を動かさずに倍率だけ変える。
+     見出しの幅・高さも一緒に伸びるため本体ペインの左上は動く。倍率を変えた後に
+     枠の位置を取り直さないと、その移動ぶんだけ図がずれる。 */
+  function setZoom(nz, cx, cy){
+    nz=Math.min(MAX,Math.max(MIN,nz));
+    if(Math.abs(nz-z)<1e-4) return;
+    var pointer=(cx!=null), r0=body.getBoundingClientRect(),
+        ax0=pointer?cx-r0.left:body.clientWidth/2,
+        ay0=pointer?cy-r0.top :body.clientHeight/2,
+        gx=(body.scrollLeft+ax0)/z, gy=(body.scrollTop+ay0)/z;
+    z=nz; apply();
+    var r1=body.getBoundingClientRect(),
+        ax1=pointer?cx-r1.left:body.clientWidth/2,
+        ay1=pointer?cy-r1.top :body.clientHeight/2;
+    body.scrollLeft=gx*z-ax1; body.scrollTop=gy*z-ay1;
+    sync();
+  }
+  function bind(id,fn){ var b=document.getElementById(id); if(b) b.addEventListener('click',fn); }
+  bind('zoomIn',    function(){ setZoom(z*1.25); });
+  bind('zoomOut',   function(){ setZoom(z/1.25); });
+  bind('zoomLevel', function(){ setZoom(1); });
+  bind('zoomFit',   function(){
+    if(!bodyBase) return;
+    var avail=vp.clientWidth-(body.offsetWidth-body.clientWidth);  /* 縦バーのぶんを引く */
+    setZoom(avail/(baseLabel+bodyBase.w));
+    body.scrollLeft=0; body.scrollTop=0; sync();   /* 全体を出すので左上に戻す */
+  });
+  /* Ctrl（Mac は ⌘）＋ホイール、トラックパッドのピンチ。素のホイールはスクロールのまま。 */
+  body.addEventListener('wheel',function(e){
+    if(!(e.ctrlKey||e.metaKey)) return;
+    e.preventDefault();
+    setZoom(z*Math.pow(1.0018,-e.deltaY), e.clientX, e.clientY);
+  },{passive:false});
+  apply();
 })();
 </script>
 
